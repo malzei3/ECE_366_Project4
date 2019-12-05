@@ -104,79 +104,96 @@ def cache_simulate():
     while not finished:
         DIC += 1
         fetch = Instruction[PC]
-        x = fetch[0][0]
-        # ********************************************************************************************************* Finish
-        if (fetch[0:32] == '00010000000000001111111111111111'):
-            print("PC =" + str(PC * 4) + " Instruction: Deadloop. Ending program")
+        if PC == (len(instructionsList)-1):
             finished = True
+        # ********************************************************************************************************* Finish
+        #if (fetch[0:32] == '00010000000000001111111111111111'):
+        #   print("PC =" + str(PC * 4) + " Instruction: Deadloop. Ending program")
+        #   finished = True
 
         # ********************************************************************************************************* ADD
-        elif (fetch[0][0] == "add"):  # ADD
-            if (debugMode):
-                print("PC =" + str(PC * 4) + " Instruction:" + str(asmCopy[PC]))
+        if (fetch[0][0] == "add"):  # ADD
             PC += 1
             Register[int(fetch[1][0])] = Register[int(fetch[1][1])] + Register[int(fetch[1][2])]
+            if (debugMode):
+                printInfo(Register, DIC, PC)
 
         # ********************************************************************************************************* ADD
+        elif (fetch[0][0] == "addu"):  # ADDU
+            PC += 1
+            Register[int(fetch[1][0])] = abs(Register[int(fetch[1][1])]) + abs(Register[int(fetch[1][2])])
+            if (debugMode):
+                printInfo(Register, DIC, PC)
+
+        # ********************************************************************************************************* ori
         elif (fetch[0][0] == "ori"):  # ori
-            if (debugMode):
-                print("PC =" + str(PC * 4) + " Instruction:" + str(asmCopy[PC]))
             PC += 1
             Register[int(fetch[1][0])] = int(fetch[1][2]) | Register[int(fetch[1][1])]
+            if (debugMode):
+                printInfo(Register, DIC, PC)
 
-        # ********************************************************************************************************* ADD
+        # ********************************************************************************************************* xor
+        elif (fetch[0][0] == "xor"):  # xor
+            PC += 1
+            var = int(bin(int(fetch[1][1])).replace("0b","")) ^ int(bin(int(fetch[1][1])).replace("0b",""))
+            Register[int(fetch[1][0])] = var
+            if (debugMode):
+                printInfo(Register, DIC, PC)
+
+
+        # ********************************************************************************************************* sll
         elif (fetch[0][0] == "sll"):  # sll
-            if (debugMode):
-                print("PC =" + str(PC * 4) + " Instruction:" + str(asmCopy[PC]))
-            var = format(register[fetch[1][1]], '032b')
-
             PC += 1
-            Register[int(fetch[1][0])] = int(fetch[1][2]) | Register[int(fetch[1][1])]
+            var1 = Register[int(fetch[1][1])]
+            var2 = int(fetch[1][2])
+            Register[int(fetch[1][0])] = (var1 <<  var2) & (0xFFFFFFFF)
+            if (debugMode):
+                printInfo(Register, DIC, PC)
 
         # ********************************************************************************************************* SUB
         elif (fetch[0][0] == "sub"):  # SUB
-            if (debugMode):
-                print("PC =" + str(PC * 4) + " Instruction:" + str(asmCopy[PC]))
             PC += 1
             Register[int(fetch[1][0])] = Register[int(fetch[1][1])] - Register[int(fetch[1][2])]
+            if (debugMode):
+                printInfo(Register, DIC, PC)
 
         # ********************************************************************************************************* ADDI
         elif (fetch[0][0] == 'addi'):  # ADDI
             imm = int(fetch[1][2])
-            if (debugMode):
-                print("PC =" + str(PC * 4) + " Instruction:" + str(asmCopy[PC]))
             PC += 1
             Register[int(fetch[1][0])] = Register[int(fetch[1][1])] + imm
+            if (debugMode):
+                printInfo(Register, DIC, PC)
 
         # ********************************************************************************************************* BEQ
         elif (fetch[0][0] == 'beq'):  # BEQ
             imm = int(fetch[1][2])
-            if (debugMode):
-                print("PC =" + str(PC * 4) + " Instruction:" + str(asmCopy[PC]))
             PC += 1
             PC = PC + imm if (Register[int(fetch[1][0])] == Register[int(fetch[1][1])]) else PC
+            if (debugMode):
+                printInfo(Register, DIC, PC)
 
         # ********************************************************************************************************* BNE
         elif (fetch[0][0] == 'bne'):  # BNE
             imm = int(fetch[1][2])
-            if (debugMode):
-                print("PC =" + str(PC * 4) + " Instruction:" + str(asmCopy[PC]))
             PC += 1
             PC = PC + imm if Register[int(fetch[1][0])] != Register[int(fetch[1][1])] else PC
+            if (debugMode):
+                printInfo(Register, DIC, PC)
 
         # ********************************************************************************************************* SLT
         elif (fetch[0][0] == 'slt'):  # SLT
-            if (debugMode):
-                print("PC =" + str(PC * 4) + " Instruction:" + str(asmCopy[PC]))
             PC += 1
             Register[int(fetch[1][0])] = 1 if Register[int(fetch[1][1])] < Register[int(fetch[1][2])] else 0
+            if (debugMode):
+                printInfo(Register, DIC, PC)
 
         # ********************************************************************************************************* SLTU
         elif (fetch[0][0] == 'sltu'):  # SLTU
-            if (debugMode):
-                print("PC =" + str(PC * 4) + " Instruction:" + str(asmCopy[PC]))
             PC += 1
             Register[int(fetch[1][0])] = 1 if Register[int(fetch[1][1])] < Register[int(fetch[1][2])] else 0
+            if (debugMode):
+                printInfo(Register, DIC, PC)
 
         # ********************************************************************************************************* SW
         elif (fetch[0][0] == 'sw'):  # SW
@@ -190,12 +207,12 @@ def cache_simulate():
                 print("Runtime exception: fetch address not aligned on word boundary. Exiting ")
                 print("Instruction causing error:", str(asmCopy[PC]))
                 exit()
-            if (debugMode):
-                print("PC =" + str(PC * 4) + " Instruction:" + str(asmCopy[PC]))
             PC += 1
             imm = int(fetch[2][16:32])
             index = int(fetch[2][32 - set_offset - 2:32 - 2], 2)
             Memory[imm + Register[int(fetch[2][6:11], 2)] - 8192] = Register[int(fetch[2][11:16], 2)]
+            if (debugMode):
+                printInfo(Register, DIC, PC)
 
             # TO-DO: CACHE-ACCESS
             
@@ -220,7 +237,7 @@ def cache_simulate():
             index = address[
                     16 - 2 - word_offset - set_offset:16 - 2 - word_offset]  # how many bits needed for set indexing
             if (debugMode):
-                print("PC =" + str(PC * 4) + " Instruction:" + str(asmCopy[PC]))
+                printInfo(Register, DIC, PC)
                 print("Address of loadword: ", address)
                 print("Word offset", wordIndex)
                 print("Set index", index)
@@ -270,6 +287,14 @@ def cache_simulate():
     print("Registers: " + str(Register))
     print("Cache data: " + str(Cache))
 
+def printInfo(_register, _DIC, _PC):
+    print('\n************** Instruction Number ' + str(_PC) + '. ' + asmCopy[_PC-1] + ' : **************\n')
+    print('Registers $8 - $23 \n', _register)
+    print('\nDynamic Instr Count ', _DIC)
+    print('\nPC = ', _PC*4)
+    print('\nPress enter to continue.......')
+    input()
+
 # -------------------------------------------------------------------------------------------------------------------- #
 # -------------------------------------------------------------------------------------------------------------------- #
 # ------------------------------------------  Cache Simulator End   -------------------------------------------------- #
@@ -305,19 +330,10 @@ def intToBin(intNum, bits):
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # FUNCTION: Takes hex and return int
-def ConvertHexToInt(_line):
-    i = ""
-    for item in _line:
-        if "0x" in item:
-            ind = _line.index(item)
-            if "(" in item:
-                i = item.find("(")
-                i = item[i:]
-                item = item.replace(i,"")
-            item = str(int(item, 0))
-            item = item + i
-            _line[ind]=item
-            
+def CheckandConvertHexToInt(_line):
+    if "0x" in _line:
+        _line = _line.replace('0x','')
+        _line = int(_line, 16)   
     return _line
 
 # -------------------------------------------------------------------------------------------------------------------- #
@@ -340,6 +356,7 @@ def insertMipsFile():
             item = item.replace('$','')
             line[ind] = item.split(',')
         
+        line[1][2] = str(CheckandConvertHexToInt(line[1][2]))
         Instruction.append(line)
 
     return Instruction
@@ -390,6 +407,7 @@ def main():
             print("\nWould you like to run simulator in debug mode ?")
             debugMode =True if  int(input("\n1: debug mode \n\n2: normal execution\n")) == 1 else False
             instructionsList = insertMipsFile()
+
             cache_simulate()
 
         
