@@ -8,6 +8,9 @@ class Statistic:
     def __init__(self, debugMode):
         self.I = ""  # Current instr being executed
         self.name = ""  # name of the instruction
+        self.p1 = 0
+        self.p2 = 0
+        self.p3 = 0
         self.cycle = 0  # Total cycles in simulation
         self.DIC = 0  # Total Dynamic Instr Count
         self.threeCycles = 0  # How many instr that took 3 cycles to execute
@@ -30,9 +33,12 @@ class Statistic:
         self.stallCount = 0     #
         self.delay = 0
 
-    def log(self, I, name, cycle, pc):
+    def log(self, I, p1, p2, p3, name, cycle, pc):
         self.I = I
         self.name = name
+        self.p1 = p1
+        self.p2 = p2
+        self.p3 = p3
         self.cycle = self.cycle + cycle
         self.pc = pc
         self.DIC += 1
@@ -45,27 +51,15 @@ class Statistic:
 
     # Since the self.cycle has the updated cycles, need to substract x cycles for correct printing , i.e (self.cycle - x)
     def prints(self):
+        #imm = int(self.I[16:32], 2) if self.I[16] == '0' else -(65535 - int(self.I[16:32], 2) + 1)
         if (self.debugMode):
             print("\n")
             print("Instruction: " + self.I)
-            if (self.name == "add"):
-                print("Cycle: " + str(self.cycle - 4) + "|PC: " + str(self.pc * 4) + " add $" + str(
-                    int(self.I[16:21], 2)) + ",$" + str(int(self.I[6:11], 2)) + ",$" + str(
-                    int(self.I[11:16], 2)) + "   Taking 4 cycles")
-            elif (self.name == "addi"):
-                print("Cycle: " + str(self.cycle - 4) + "|PC: " + str(self.pc * 4) + " addi $" + str(
-                    int(self.I[16:21], 2)) + ",$" + str(int(self.I[6:11], 2)) + "," + str(imm) + "   Taking 4 cycles")
-            elif (self.name == "beq"):
-                print("Cycle: " + str(self.cycle - 3) + "|PC: " + str(self.pc * 4) + " beq $" + str(
-                    int(self.I[6:11], 2)) + ",$" + str(int(self.I[11:16], 2)) + "," + str(imm) + "   Taking 3 cycles")
-            elif (self.name == "slt"):
-                print("Cycle: " + str(self.cycle - 4) + "|PC: " + str(self.pc * 4) + " slt $" + str(
-                    int(self.I[16:21], 2)) + ",$" + str(int(self.I[6:11], 2)) + ",$" + str(
-                    int(self.I[11:16], 2)) + "   Taking 4 cycles")
-            elif (self.name == "sw"):
-                print("Cycle: " + str(self.cycle - 4) + "|PC :" + str(self.pc * 4) + " sw $" + str(
-                    int(self.I[6:11], 2)) + "," + str(int(self.I[16:32], 2) - 8192) + "($" + str(
-                    int(self.I[6:11], 2)) + ")" + "   Taking 4 cycles")
+            if (self.name == "ori"):
+                print("Cycle: " + str(self.cycle - 4) + "|PC :" + str(self.pc) + " ori $" + str(
+                    self.p1) + "," + str(self.p2) + str(
+                    self.p3) +  "   Taking 4 cycles")
+
             else:
                 print("")
 
@@ -92,12 +86,10 @@ def readIn(s):
                 text += line
 
     instructions = inst
-
     return text
 
 
 def splitText(text):
-    print(text)
     return text.split("\n")
 
 
@@ -120,21 +112,22 @@ def simulate(lisIns, debugMode):
             finished = True
             print("PC = " + str(PC * 4) + "  Instruction: " + instructions[PC] + " : Deadloop. Exiting simulation")
 
-        elif (line[0:3] == 'add'):
-            line = line.replace("add", "").replace("$", "").split(",")
+        elif (line[0:3] == 'ori'):
+            print(line)
+            linete = line.replace("ori", "").replace("$", "").split(",")
             PC += 4
-            Register[int(line[0])] = Register[int(line[1])] + Register[int(line[2])]
-            stats.log(line, "add", 4, PC)  # ADD instr, 4 cycles
+            Register[int(linete[0])] = Register[int(linete[1])] | int(linete[2])
+            stats.log(line, "ori", str(linete[0]), str(linete[1]), str(linete[2]), 4, PC)  # ADD instr, 4 cycles
             lineCount += 1
 
         else:
             print("Instruction " + str(lisIns[lineCount]) + " not supported. Exiting")
+            lineCount += 1
             exit()
 
         if (not (finished)):
-            #print("Test")
-            #stats.prints()
-            print(PC, lisIns[lineCount])
+            #print("Cont")
+            stats.prints()
 
     if (finished):
         elapsed_time = time.time() - start_time
