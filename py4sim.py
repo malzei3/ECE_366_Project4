@@ -2,10 +2,6 @@ import os
 import math
 import copy
 
-debugMode = False
-instructionsList = []
-asmCopy = []
-
 # -------------------------------------------------------------------------------------------------------------------- #
 # FUNCTION: Mc Simulation.
 def simMC():
@@ -22,11 +18,12 @@ def simAP():
 # -------------------------------------------------------------------------------------------------------------------- #
 # -------------------------------------------------------------------------------------------------------------------- #
 
-import math
+debugMode = False
+instructionsList = []
+asmCopy = []
 
 # For simple example, let's have all settings as global-variables
 blk_size = 4  # each block is 64bytes, or 2 words
-
 total_blk = 8  # 8 blocks in cache
 
 mem_space = 1024
@@ -116,21 +113,21 @@ def cache_simulate():
             PC += 1
             Register[int(fetch[1][0])] = Register[int(fetch[1][1])] + Register[int(fetch[1][2])]
             if (debugMode):
-                printInfo(Register, DIC, PC)
+                printInfo(Register, DIC, PC, Memory, Misses, Hits, Cache)
 
         # ********************************************************************************************************* ADD
         elif (fetch[0][0] == "addu"):  # ADDU
             PC += 1
             Register[int(fetch[1][0])] = abs(Register[int(fetch[1][1])]) + abs(Register[int(fetch[1][2])])
             if (debugMode):
-                printInfo(Register, DIC, PC)
+                printInfo(Register, DIC, PC, Memory, Misses, Hits, Cache)
 
         # ********************************************************************************************************* ori
         elif (fetch[0][0] == "ori"):  # ori
             PC += 1
             Register[int(fetch[1][0])] = int(fetch[1][2]) | Register[int(fetch[1][1])]
             if (debugMode):
-                printInfo(Register, DIC, PC)
+                printInfo(Register, DIC, PC, Memory, Misses, Hits, Cache)
 
         # ********************************************************************************************************* xor
         elif (fetch[0][0] == "xor"):  # xor
@@ -138,7 +135,7 @@ def cache_simulate():
             var = int(bin(int(fetch[1][1])).replace("0b","")) ^ int(bin(int(fetch[1][1])).replace("0b",""))
             Register[int(fetch[1][0])] = var
             if (debugMode):
-                printInfo(Register, DIC, PC)
+                printInfo(Register, DIC, PC, Memory, Misses, Hits, Cache)
 
 
         # ********************************************************************************************************* sll
@@ -148,14 +145,14 @@ def cache_simulate():
             var2 = int(fetch[1][2])
             Register[int(fetch[1][0])] = (var1 <<  var2) & (0xFFFFFFFF)
             if (debugMode):
-                printInfo(Register, DIC, PC)
+                printInfo(Register, DIC, PC, Memory, Misses, Hits, Cache)
 
         # ********************************************************************************************************* SUB
         elif (fetch[0][0] == "sub"):  # SUB
             PC += 1
             Register[int(fetch[1][0])] = Register[int(fetch[1][1])] - Register[int(fetch[1][2])]
             if (debugMode):
-                printInfo(Register, DIC, PC)
+                printInfo(Register, DIC, PC, Memory, Misses, Hits, Cache)
 
         # ********************************************************************************************************* ADDI
         elif (fetch[0][0] == 'addi'):  # ADDI
@@ -163,7 +160,7 @@ def cache_simulate():
             PC += 1
             Register[int(fetch[1][0])] = Register[int(fetch[1][1])] + imm
             if (debugMode):
-                printInfo(Register, DIC, PC)
+                printInfo(Register, DIC, PC, Memory, Misses, Hits, Cache)
 
         # ********************************************************************************************************* BEQ
         elif (fetch[0][0] == 'beq'):  # BEQ
@@ -171,7 +168,7 @@ def cache_simulate():
             PC += 1
             PC = PC + imm if (Register[int(fetch[1][0])] == Register[int(fetch[1][1])]) else PC
             if (debugMode):
-                printInfo(Register, DIC, PC)
+                printInfo(Register, DIC, PC, Memory, Misses, Hits, Cache)
 
         # ********************************************************************************************************* BNE
         elif (fetch[0][0] == 'bne'):  # BNE
@@ -179,105 +176,139 @@ def cache_simulate():
             PC += 1
             PC = PC + imm if Register[int(fetch[1][0])] != Register[int(fetch[1][1])] else PC
             if (debugMode):
-                printInfo(Register, DIC, PC)
+                printInfo(Register, DIC, PC, Memory, Misses, Hits, Cache)
 
         # ********************************************************************************************************* SLT
         elif (fetch[0][0] == 'slt'):  # SLT
             PC += 1
             Register[int(fetch[1][0])] = 1 if Register[int(fetch[1][1])] < Register[int(fetch[1][2])] else 0
             if (debugMode):
-                printInfo(Register, DIC, PC)
+                printInfo(Register, DIC, PC, Memory, Misses, Hits, Cache)
 
         # ********************************************************************************************************* SLTU
         elif (fetch[0][0] == 'sltu'):  # SLTU
             PC += 1
             Register[int(fetch[1][0])] = 1 if Register[int(fetch[1][1])] < Register[int(fetch[1][2])] else 0
             if (debugMode):
-                printInfo(Register, DIC, PC)
+                printInfo(Register, DIC, PC, Memory, Misses, Hits, Cache)
 
         # ********************************************************************************************************* SW
         elif (fetch[0][0] == 'sw'):  # SW
-            x = fetch[1][1].split('(')
-            x[1] = x[1].replace(')',"")
-            x[0] = "{0:08b}".format(int(x[0].replace('0x',""), 16)).zfill(16)
-            fetch.append("101011" + intToBin(int(x[1]), 5) + intToBin(int(fetch[1][0]), 5) + x[0])
-
+            line = convertAsmToBin(fetch)
             # Sanity check for word-addressing
-            if (int(fetch[2][30:32]) % 4 != 0):
+            if (int(line[30:32]) % 4 != 0):
                 print("Runtime exception: fetch address not aligned on word boundary. Exiting ")
                 print("Instruction causing error:", str(asmCopy[PC]))
                 exit()
             PC += 1
-            imm = int(fetch[2][16:32])
-            index = int(fetch[2][32 - set_offset - 2:32 - 2], 2)
-            Memory[imm + Register[int(fetch[2][6:11], 2)] - 8192] = Register[int(fetch[2][11:16], 2)]
-            if (debugMode):
-                printInfo(Register, DIC, PC)
-
-            # TO-DO: CACHE-ACCESS
-            
-        # *********************************************************************************************************LW
-        elif (fetch[0][0] == 'lw'):  # ********LOAD WORD********
-            x = fetch[1][1].split('(')
-            x[1] = x[1].replace(')',"")
-            x[0] = "{0:08b}".format(int(x[0].replace('0x',""), 16)).zfill(16)
-            fetch.append("101011" + intToBin(int(x[1]), 5) + intToBin(int(fetch[1][0]), 5) + x[0]) 
-            # Sanity check for word-addressing
-            if (int(fetch[2][30:32]) % 4 != 0):
-                print("Runtime exception: fetch address not aligned on word boundary. Exiting ")
-                print("Instruction causing error:", str(asmCopy[PC]))
-                exit()
-            imm = int(fetch[2][16:32], 2)
-
-            PC += 1
-            # Cache access:
-            # First check cache for any hit based on valid bit and index of cache
-            address = format(imm + Register[int(fetch[2][6:11], 2)], "016b")  # The actual address load-word is accessing
+            imm = int(line[16:32], 2)
+            index = int(line[32 - set_offset - 2:32 - 2], 2)
+            Memory[imm + Register[int(line[6:11], 2)] - 8192] = Register[int(line[11:16], 2)]
+            address = format(imm + Register[int(line[6:11], 2)], "016b")  # The actual address load-word is accessing
             wordIndex = address[16 - 2 - word_offset:16 - 2]  # how many bits needed to index word in each blocks
-            index = address[
-                    16 - 2 - word_offset - set_offset:16 - 2 - word_offset]  # how many bits needed for set indexing
+
             if (debugMode):
-                printInfo(Register, DIC, PC)
-                print("Address of loadword: ", address)
+                print("Address of Store Word: ", address)
                 print("Word offset", wordIndex)
                 print("Set index", index)
-            wordIndex = int(wordIndex, 2)
-            index = int(index, 2)
+                input()
+
             if (Valid[index] == 0):  # Cache miss
                 Misses += 1
-                for i in range(blk_size):
-                    Cache[index][i] = Memory[
-                        imm + Register[int(fetch[2][6:11], 2)] - 8192 + i * 4]  # Load memory into cache data
-                Register[int(fetch[2][11:16], 2)] = Memory[
-                    imm + Register[int(fetch[2][6:11], 2)] - 8192]  # Load data into register as well
                 Valid[index] = 1  # Since we have cache miss, valid bit is now 1 after cache has updated value
                 Tag[index] = address[0:16 - 2 - word_offset - set_offset]
+                Cache[index][int(wordIndex, 2)] = Register[int(line[11:16], 2)] 
+
                 if (debugMode):
                     print("Cache missed due to valid bit = 0")
                     print("Tag = ", Tag[index])
                     print("Cache", Cache)
-            else:  # Valid bit is 1, now check if tag matches
+                    input()
+            else:
                 if (Tag[index] == address[0:16 - 2 - word_offset - set_offset]):  # Cache hit
-
-                    Register[int(fetch[2][11:16], 2)] = Cache[index][wordIndex]
                     Hits += 1
                     if (debugMode):
                         print("Cache hit")
                         print("Tag = ", Tag[index])
                         print("Cache", Cache)
+                        input()
+
+            if (debugMode):
+                printInfo(Register, DIC, PC, Memory, Misses, Hits, Cache)
+
+            # TO-DO: CACHE-ACCESS
+            
+        # *********************************************************************************************************LW
+        elif (fetch[0][0] == 'lw'):  # ********LOAD WORD********
+            line = convertAsmToBin(fetch)
+            # Sanity check for word-addressing
+            if (int(line[30:32]) % 4 != 0):
+                print("Runtime exception: fetch address not aligned on word boundary. Exiting ")
+                print("Instruction causing error:", str(asmCopy[PC]))
+                exit()
+
+            imm = int(line[16:32], 2)
+            PC += 1
+
+            #Cache access:
+            #First check cache for any hit based on valid bit and index of cache
+            address = format(imm + Register[int(line[6:11], 2)], "016b")  # The actual address load-word is accessing
+            wordIndex = address[16 - 2 - word_offset:16 - 2]  # how many bits needed to index word in each blocks
+            index = address[16 - 2 - word_offset - set_offset:16 - 2 - word_offset]  # how many bits needed for set indexing
+
+            if (debugMode):
+                print("Address of loadword: ", address)
+                print("Word offset", wordIndex)
+                print("Set index", index)
+                input()
+
+            wordIndex = int(wordIndex, 2)
+            index = int(index, 2)
+
+            if (Valid[index] == 0):  # Cache miss
+                Misses += 1
+                for i in range(blk_size):
+                    Cache[index][i] = Memory[
+                        imm + Register[int(line[6:11], 2)] - 8192 + i * 4]  # Load memory into cache data
+
+                Register[int(line[11:16], 2)] = Memory[imm + Register[int(line[6:11], 2)] - 8192]  # Load data into register as well
+                Valid[index] = 1  # Since we have cache miss, valid bit is now 1 after cache has updated value
+                Tag[index] = address[0:16 - 2 - word_offset - set_offset]
+                Cache[index][wordIndex] = Register[int(line[11:16], 2)]
+
+                if (debugMode):
+                    print("Cache missed due to valid bit = 0")
+                    print("Tag = ", Tag[index])
+                    print("Cache", Cache)
+                    input()
+
+            else:  # Valid bit is 1, now check if tag matches
+                if (Tag[index] == address[0:16 - 2 - word_offset - set_offset]):  # Cache hit
+
+                    Register[int(line[11:16], 2)] = Cache[index][wordIndex]
+                    Hits += 1
+                    if (debugMode):
+                        print("Cache hit")
+                        print("Tag = ", Tag[index])
+                        print("Cache", Cache)
+                        input()
+
+
                 else:  # Tag doesnt match, cache miss
                     Misses += 1
                     for i in range(blk_size):
-                        Cache[index][i] = Memory[
-                            imm + Register[int(fetch[2][6:11], 2)] - 8192 + i * 4]  # Load memory into cache data
-                    Register[int(fetch[2][11:16], 2)] = Memory[
-                        imm + Register[int(fetch[2][6:11], 2)] - 8192]  # Load cache data into register
+                        Cache[index][i] = Memory[imm + Register[int(fetch[2][6:11], 2)] - 8192 + i * 4]  # Load memory into cache data
+
+                    Register[int(line[11:16], 2)] = Memory[imm + Register[int(line[6:11], 2)] - 8192]  # Load cache data into register
                     Tag[index] = address[0:16 - 2 - word_offset - set_offset]  # Update tag
                     if (debugMode):
                         print("Cache missed due to tag mismatch")
                         print("Tag = ", Tag[index])
                         print("Cache", Cache)
-            print("")
+                        input()
+
+            if (debugMode):
+                printInfo(Register, DIC, PC, Memory, Misses, Hits, Cache)
 
     print("***Finished simulation***")
     print("Dynamic instructions count: " + str(DIC))
@@ -287,11 +318,22 @@ def cache_simulate():
     print("Registers: " + str(Register))
     print("Cache data: " + str(Cache))
 
-def printInfo(_register, _DIC, _PC):
+# -------------------------------------------------------------------------------------------------------------------- #
+# ---- FUNCTION: Prints the registers information when the debug mode is on.
+def printInfo(_register, _DIC, _PC,_Mem,_Misses,_Hits,_Cache):
     print('\n************** Instruction Number ' + str(_PC) + '. ' + asmCopy[_PC-1] + ' : **************\n')
-    print('Registers $8 - $23 \n', _register)
-    print('\nDynamic Instr Count ', _DIC)
-    print('\nPC = ', _PC*4)
+    print('Registers $0 - $23: \n', _register)
+    print('Memory 8192 - 8242: \n', _Mem[0:49])
+    print('\nDinstructions count: ', _DIC)
+    print('PC = ', _PC*4)
+    print("\n***Cache Info***")
+    print("Cache misses:" + str(_Misses))
+    print("Cache hits:" + str(_Hits))
+    if(_Hits + _Misses == 0):
+        print("Cache Hit Rate:" + str(0))
+    else:
+        print("Cache Hit Rate:" + str(100 * (float(_Hits) / float(_Hits + _Misses))))
+    print("Cache data: " + str(_Cache))
     print('\nPress enter to continue.......')
     input()
 
@@ -331,10 +373,36 @@ def intToBin(intNum, bits):
 # -------------------------------------------------------------------------------------------------------------------- #
 # FUNCTION: Takes hex and return int
 def CheckandConvertHexToInt(_line):
+
+    if "(" in _line:
+      _line = _line.replace(")","")
+      _line = _line.split("(")
+      if "0x" in _line[0]:
+        _line[0] = _line[0].replace('0x','')
+        _line[0] = int(_line[0], 16)
+
     if "0x" in _line:
         _line = _line.replace('0x','')
         _line = int(_line, 16)   
     return _line
+
+# -------------------------------------------------------------------------------------------------------------------- #
+#---- FUNCTION: Convert an instruction to 
+def convertAsmToBin(line):
+
+    if(line[0][0] == 'lw'):
+        rt = format(int(line[1][0]), '05b').zfill(5)
+        rs = format(int(line[1][1][1]),'05b').zfill(5)
+        offset = format(line[1][1][0],'016b') if (int(line[1][1][0]) >= 0) else format(65536 + int(line[1][1][0]),'016b')
+        bin = "100011" + rs + rt + offset.zfill(16)
+
+    elif(line[0][0] == 'sw'):
+        rt = format(int(line[1][0]), '05b').zfill(5)
+        rs = format(int(line[1][1][1]),'05b').zfill(5)
+        offset = format(line[1][1][0],'016b') if (int(line[1][1][0]) >= 0) else format(65536 + int(line[1][1][0]),'016b')
+        bin = "101011" + rs + rt + offset.zfill(16)
+
+    return bin
 
 # -------------------------------------------------------------------------------------------------------------------- #
 #---- FUNCTION: function read in asm file and returns it as a list
@@ -356,11 +424,16 @@ def insertMipsFile():
             item = item.replace('$','')
             line[ind] = item.split(',')
         
-        line[1][2] = str(CheckandConvertHexToInt(line[1][2]))
+        if(line[0][0] == 'lw' or line[0][0] == 'sw'):
+            line[1][1] = CheckandConvertHexToInt(line[1][1])
+        else:
+            line[1][2] = str(CheckandConvertHexToInt(line[1][2]))
         Instruction.append(line)
 
     return Instruction
             
+# -------------------------------------------------------------------------------------------------------------------- #
+#---- FUNCTION: Main
 def main():
 
     global instructionsList
@@ -369,7 +442,7 @@ def main():
     ## Keeps loop until user hits Exit.
     while True:
 
-        print("Choose what you’d like to do (1, 2, or 3): ", "1: Processor Simulation of MC ","2: Processor Simulation of AP ","3: Data Cache Simulator ","4: Exit", sep="\n\n")
+        print("\nChoose what you’d like to do (1, 2, or 3): ", "1: Processor Simulation of MC ","2: Processor Simulation of AP ","3: Data Cache Simulator ","4: Exit", sep="\n\n")
         
         while True:
             Input = input()
