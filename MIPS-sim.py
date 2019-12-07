@@ -59,15 +59,53 @@ class Statistic:
         if (self.debugMode):
             print("\n")
             print("Instruction: " + self.I)
-            if (self.name == "ori"):
+            if self.name == "ori":
                 print("Cycle: " + str(self.cycle - 4) + "| PC:" + str(self.pc) + " ori $" + str(
                     self.p1) + ", $" + str(self.p2) + ", "+ str(
                     self.p3) + "   Taking 4 cycles")
 
             elif self.name == "addi":
-                print("Cycle: " + str(self.cycle - 4) + "| PC:" + str(self.pc) + " ori $" + str(
-                    self.p1) + "," + str(self.p2) + str(
+                print("Cycle: " + str(self.cycle - 4) + "| PC:" + str(self.pc) + " addi $" + str(
+                    self.p1) + ", $" + str(self.p2) + ", " + str(
                     self.p3) + "   Taking 4 cycles")
+            elif self.name == "addu":
+                print("Cycle: " + str(self.cycle - 4) + "| PC:" + str(self.pc) + " addu $" + str(
+                    self.p1) + ", $" + str(self.p2) + ", $" + str(
+                    self.p3) + "   Taking 4 cycles")
+            elif self.name == "beq":
+                print("Cycle: " + str(self.cycle - 4) + "| PC:" + str(self.pc) + " beq $" + str(
+                    self.p1) + ", " + str(self.p2) + ", " + str(
+                    self.p3) + "   Taking 4 cycles")
+            elif self.name == "bne":
+                print("Cycle: " + str(self.cycle - 4) + "| PC:" + str(self.pc) + " bne $" + str(
+                    self.p1) + ", " + str(self.p2) + ", " + str(
+                    self.p3) + "   Taking 4 cycles")
+            elif self.name == "sll":
+                print("Cycle: " + str(self.cycle - 4) + "| PC:" + str(self.pc) + " sll $" + str(
+                    self.p1) + ", $" + str(self.p2) + ", " + str(
+                    self.p3) + "   Taking 4 cycles")
+            elif self.name == "sub":
+                print("Cycle: " + str(self.cycle - 4) + "| PC:" + str(self.pc) + " sub $" + str(
+                    self.p1) + ", $" + str(self.p2) + ", $" + str(
+                    self.p3) + "   Taking 4 cycles")
+            elif self.name == "xor":
+                print("Cycle: " + str(self.cycle - 4) + "| PC:" + str(self.pc) + " xor $" + str(
+                    self.p1) + ", $" + str(self.p2) + ", $" + str(
+                    self.p3) + "   Taking 4 cycles")
+            elif self.name == "slt":
+                print("Cycle: " + str(self.cycle - 4) + "| PC:" + str(self.pc) + " slt $" + str(
+                    self.p1) + ", $" + str(self.p2) + ", $" + str(
+                    self.p3) + "   Taking 4 cycles")
+            #sw $t, offset($s)
+            elif self.name == "sw":
+                print("Cycle: " + str(self.cycle - 4) + "| PC:" + str(self.pc) + " sw $" + str(
+                    self.p1) + ", " + str(self.p2) + "($" + str(
+                    self.p3) + ")   Taking 4 cycles")
+            #lw $t, offset($s)
+            elif self.name == "lw":
+                print("Cycle: " + str(self.cycle - 4) + "| PC:" + str(self.pc) + " lw $" + str(
+                    self.p1) + ", " + str(self.p2) + "($" + str(
+                    self.p3) + ")   Taking 4 cycles")
 
             else:
                 print("")
@@ -139,45 +177,69 @@ def simulate(lisIns, debugMode):
             print("PC = " + str(PC * 4) + "  Instruction: " + instructions[PC] + " : Deadloop. Exiting simulation")
 
         elif line[0:3] == "ori":
-            linete = line.replace("ori", "").replace("$", "").split(",")
+            linete = line.replace("ori", "").replace(" ", "").replace("$", "").split(",")
             PC += 4
             Register[int(linete[0])] = Register[int(linete[1])] | int(linete[2])
             stats.log(line, "ori", str(linete[0]), str(linete[1]), str(linete[2]), 4, PC)  # ori instr, 4 cycles
             lineCount += 1
 
+        elif line[0:4] == "addu":
+            linete = line.replace("addu", "").replace(" ", "").replace("$", "").replace("0x", "").split(",")
+            PC += 4
+            Register[int(linete[0])] = abs(Register[int(linete[1])]) + abs(Register[int(linete[2])])
+            stats.log(line, "addu", str(linete[0]), str(linete[1]), str(linete[2]), 4, PC)  # addi instr, 4 cycles
+            lineCount += 1
+
         elif line[0:4] == "addi":
-            linete = line.replace("addi", "").replace("$", "").replace("0x", "").split(",")
+            linete = line.replace("addi", "").replace(" ", "").replace("$", "").replace("0x", "").split(",")
             PC += 4
             Register[int(linete[0])] = Register[int(linete[1])] + int(linete[2])
             stats.log(line, "addi", str(linete[0]), str(linete[1]), str(linete[2]), 4, PC)  # addi instr, 4 cycles
             lineCount += 1
 
         elif line[0:4] == "sub":
-            linete = line.replace("sub", "").replace("$", "").replace("0x", "").split(",")
+            linete = line.replace("sub", "").replace(" ", "").replace("$", "").replace("0x", "").split(",")
             PC += 4
             Register[int(linete[0])] = Register[int(linete[1])] - Register[int(linete[2])]
             stats.log(line, "sub", str(linete[0]), str(linete[1]), str(linete[2]), 4, PC)  # sub instr, 4 cycles
             lineCount += 1
 
         elif line[0:4] == "xor":
-            linete = line.replace("xor", "").replace("$", "").split(",")
+            linete = line.replace("xor", "").replace(" ", "").replace("$", "").split(",")
             PC += 4
             Register[int(linete[0])] = int(Register[int(linete[1])]) ^ int(Register[int(linete[2])])
             stats.log(line, "xor", str(linete[0]), str(linete[1]), str(linete[2]), 4, PC)  # xor instr, 4 cycles
             lineCount += 1
 
         elif line[0:4] == "sll":
-            linete = line.replace("sll", "").replace("$", "").split(",")
+            linete = line.replace("sll", "").replace(" ", "").replace("$", "").split(",")
             PC += 4
             Register[int(linete[0])] = Register[int(linete[1])] << int(linete[2])
             stats.log(line, "sll", str(linete[0]), str(linete[1]), str(linete[2]), 4, PC)  # sll instr, 4 cycles
             lineCount += 1
 
-        elif line[0:4] == "sb":
-            linete = line.replace("sb", "").replace("$", "").replace(")", "").replace("0x", "").split(",").split("(")
+        elif line[0:4] == "slt":
+            linete = line.replace("slt", "").replace(" ", "").replace("$", "").split(",")
+            PC += 4
+            if Register[int(linete[1])] < Register[int(linete[2])]:
+                Register[int(linete[0])] = 1
+            else:
+                Register[int(linete[0])] = 0
+            stats.log(line, "slt", str(linete[0]), str(linete[1]), str(linete[2]), 4, PC)  # sll instr, 4 cycles
+            lineCount += 1
+
+        elif line[0:4] == "sw":
+            linete = line.replace("sw", "").replace("$", "").replace(")", "").replace("0x", "").split(",").split("(")
             PC += 4
             Memory[Register[int(linete[2])] + int(linete[1])] = Register[linete[0]]
-            stats.log(line, "sb", str(linete[0]), str(linete[1]), str(linete[2]), 4, PC)  # sb instr, 4 cycles
+            stats.log(line, "sw", str(linete[0]), str(linete[1]), str(linete[2]), 4, PC)  # sb instr, 4 cycles
+            lineCount += 1
+
+        elif line[0:4] == "lw":
+            linete = line.replace("lw", "").replace("$", "").replace(" ", "").replace(")", "").replace("0x", "").split(",").split("(")
+            PC += 4
+            Register[linete[0]] = Memory[Register[int(linete[2])] + int(linete[1])]
+            stats.log(line, "lw", str(linete[0]), str(linete[1]), str(linete[2]), 4, PC)  # sb instr, 4 cycles
             lineCount += 1
 
         elif line[0:4] == "bne":
@@ -195,6 +257,23 @@ def simulate(lisIns, debugMode):
                             stats.log(line, "bne", str(linete[0]), str(linete[1]), str(linete[2]), 4, PC)
                 continue
             print("No change in registers. \n")
+
+        elif line[0:4] == "beq":
+            linete = line.replace("beq", "").replace("$", "").split(",")
+            if Register[int(linete[0])] == Register[int(linete[1])]:
+                if linete[2].isdigit():
+                    PC = linete[2] * 4
+                    lineCount = lineCount[2]
+                    stats.log(line, "beq", str(linete[0]), str(linete[1]), str(linete[2]), 4, PC)  # ADD instr, 4 cycles
+                else:
+                    for i in range(len(lablename)):
+                        if lablename[i] == lisIns[2]:
+                            PC = lableaddr[i]
+                            lineCount = lableindex[i]
+                            stats.log(line, "beq", str(linete[0]), str(linete[1]), str(linete[2]), 4, PC)
+                continue
+            print("No change in registers. \n")
+
 
         else:
             print("Instruction " + str(lisIns[lineCount]) + " not supported. Exiting")
