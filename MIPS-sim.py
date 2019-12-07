@@ -197,28 +197,28 @@ def simulate(lisIns, debugMode):
             stats.log(line, "addi", str(linete[0]), str(linete[1]), str(linete[2]), 4, PC)  # addi instr, 4 cycles
             lineCount += 1
 
-        elif line[0:4] == "sub":
+        elif line[0:3] == "sub":
             linete = line.replace("sub", "").replace(" ", "").replace("$", "").replace("0x", "").split(",")
             PC += 4
             Register[int(linete[0])] = Register[int(linete[1])] - Register[int(linete[2])]
             stats.log(line, "sub", str(linete[0]), str(linete[1]), str(linete[2]), 4, PC)  # sub instr, 4 cycles
             lineCount += 1
 
-        elif line[0:4] == "xor":
+        elif line[0:3] == "xor":
             linete = line.replace("xor", "").replace(" ", "").replace("$", "").split(",")
             PC += 4
             Register[int(linete[0])] = int(Register[int(linete[1])]) ^ int(Register[int(linete[2])])
             stats.log(line, "xor", str(linete[0]), str(linete[1]), str(linete[2]), 4, PC)  # xor instr, 4 cycles
             lineCount += 1
 
-        elif line[0:4] == "sll":
+        elif line[0:3] == "sll":
             linete = line.replace("sll", "").replace(" ", "").replace("$", "").split(",")
             PC += 4
             Register[int(linete[0])] = Register[int(linete[1])] << int(linete[2])
             stats.log(line, "sll", str(linete[0]), str(linete[1]), str(linete[2]), 4, PC)  # sll instr, 4 cycles
             lineCount += 1
 
-        elif line[0:4] == "slt":
+        elif line[0:3] == "slt":
             linete = line.replace("slt", "").replace(" ", "").replace("$", "").split(",")
             PC += 4
             if Register[int(linete[1])] < Register[int(linete[2])]:
@@ -228,21 +228,21 @@ def simulate(lisIns, debugMode):
             stats.log(line, "slt", str(linete[0]), str(linete[1]), str(linete[2]), 4, PC)  # sll instr, 4 cycles
             lineCount += 1
 
-        elif line[0:4] == "sw":
+        elif line[0:2] == "sw":
             linete = line.replace("sw", "").replace("$", "").replace(")", "").replace("0x", "").split(",").split("(")
             PC += 4
             Memory[Register[int(linete[2])] + int(linete[1])] = Register[linete[0]]
             stats.log(line, "sw", str(linete[0]), str(linete[1]), str(linete[2]), 4, PC)  # sb instr, 4 cycles
             lineCount += 1
 
-        elif line[0:4] == "lw":
+        elif line[0:2] == "lw":
             linete = line.replace("lw", "").replace("$", "").replace(" ", "").replace(")", "").replace("0x", "").split(",").split("(")
             PC += 4
             Register[linete[0]] = Memory[Register[int(linete[2])] + int(linete[1])]
             stats.log(line, "lw", str(linete[0]), str(linete[1]), str(linete[2]), 4, PC)  # sb instr, 4 cycles
             lineCount += 1
 
-        elif line[0:4] == "bne":
+        elif line[0:3] == "bne":
             linete = line.replace("bne", "").replace("$", "").split(",")
             if Register[int(linete[0])] != Register[int(linete[1])]:
                 if linete[2].isdigit():
@@ -258,7 +258,7 @@ def simulate(lisIns, debugMode):
                 continue
             print("No change in registers. \n")
 
-        elif line[0:4] == "beq":
+        elif line[0:3] == "beq":
             linete = line.replace("beq", "").replace("$", "").split(",")
             if Register[int(linete[0])] == Register[int(linete[1])]:
                 if linete[2].isdigit():
