@@ -73,11 +73,11 @@ class Statistic:
                     self.p1) + ", $" + str(self.p2) + ", $" + str(
                     self.p3) + "   Taking 4 cycles")
             elif self.name == "beq":
-                print("Cycle: " + str(self.cycle - 4) + "| PC:" + str(self.pc) + " beq $" + str(
+                print("Cycle: " + str(self.cycle - 3) + "| PC:" + str(self.pc) + " beq $" + str(
                     self.p1) + ", " + str(self.p2) + ", " + str(
                     self.p3) + "   Taking 4 cycles")
             elif self.name == "bne":
-                print("Cycle: " + str(self.cycle - 4) + "| PC:" + str(self.pc) + " bne $" + str(
+                print("Cycle: " + str(self.cycle - 3) + "| PC:" + str(self.pc) + " bne $" + str(
                     self.p1) + ", " + str(self.p2) + ", " + str(
                     self.p3) + "   Taking 4 cycles")
             elif self.name == "sll":
@@ -96,14 +96,14 @@ class Statistic:
                 print("Cycle: " + str(self.cycle - 4) + "| PC:" + str(self.pc) + " slt $" + str(
                     self.p1) + ", $" + str(self.p2) + ", $" + str(
                     self.p3) + "   Taking 4 cycles")
-            #sw $t, offset($s)
-            elif self.name == "sw":
-                print("Cycle: " + str(self.cycle - 4) + "| PC:" + str(self.pc) + " sw $" + str(
+            #sb $t, offset($s)
+            elif self.name == "sb":
+                print("Cycle: " + str(self.cycle - 4) + "| PC:" + str(self.pc) + " sb $" + str(
                     self.p1) + ", " + str(self.p2) + "($" + str(
                     self.p3) + ")   Taking 4 cycles")
             #lw $t, offset($s)
-            elif self.name == "lw":
-                print("Cycle: " + str(self.cycle - 4) + "| PC:" + str(self.pc) + " lw $" + str(
+            elif self.name == "lb":
+                print("Cycle: " + str(self.cycle - 4) + "| PC:" + str(self.pc) + " lb $" + str(
                     self.p1) + ", " + str(self.p2) + "($" + str(
                     self.p3) + ")   Taking 4 cycles")
 
@@ -172,7 +172,7 @@ def simulate(lisIns, debugMode):
     while lineCount < len(lisIns):
         line = lisIns[lineCount]
 
-        if (line[0:32] == '00010000000000001111111111111111'):
+        if line[0:32] == '00010000000000001111111111111111':
             finished = True
             print("PC = " + str(PC * 4) + "  Instruction: " + instructions[PC] + " : Deadloop. Exiting simulation")
 
@@ -198,7 +198,7 @@ def simulate(lisIns, debugMode):
             lineCount += 1
 
         elif line[0:3] == "sub":
-            linete = line.replace("sub", "").replace(" ", "").replace("$", "").replace("0x", "").split(",")
+            linete = line.replace("sub", "").replace(" ", "").replace("$", "").split(",")
             PC += 4
             Register[int(linete[0])] = Register[int(linete[1])] - Register[int(linete[2])]
             stats.log(line, "sub", str(linete[0]), str(linete[1]), str(linete[2]), 4, PC)  # sub instr, 4 cycles
@@ -228,18 +228,21 @@ def simulate(lisIns, debugMode):
             stats.log(line, "slt", str(linete[0]), str(linete[1]), str(linete[2]), 4, PC)  # sll instr, 4 cycles
             lineCount += 1
 
-        elif line[0:2] == "sw":
-            linete = line.replace("sw", "").replace("$", "").replace(")", "").replace("0x", "").split(",").split("(")
+        elif line[0:2] == "sb":
+            offfrom = line.find(" ")
+            offto = line.find("(")
+            offset = line[offfrom:offto]
+            linete = line.replace("sb", "").replace("$", "").replace("(", "").replace(" ", "").replace(")", "").replace(offset, "").split(",")
             PC += 4
-            Memory[Register[int(linete[2])] + int(linete[1])] = Register[linete[0]]
-            stats.log(line, "sw", str(linete[0]), str(linete[1]), str(linete[2]), 4, PC)  # sb instr, 4 cycles
+            Memory[Register[int(linete[1])] + int(offset)] = int(Register[linete[0]]) & 0xff
+            stats.log(line, "sb", str(linete[0]), str(linete[1]), str(offset), 4, PC)  # sb instr, 4 cycles
             lineCount += 1
 
-        elif line[0:2] == "lw":
-            linete = line.replace("lw", "").replace("$", "").replace(" ", "").replace(")", "").replace("0x", "").split(",").split("(")
+        elif line[0:2] == "lb":
+            linete = line.replace("lb", "").replace("$", "").replace(" ", "").replace("(", "").replace(")", "").replace("0x", "").split(",")
             PC += 4
             Register[linete[0]] = Memory[Register[int(linete[2])] + int(linete[1])]
-            stats.log(line, "lw", str(linete[0]), str(linete[1]), str(linete[2]), 4, PC)  # sb instr, 4 cycles
+            stats.log(line, "lb", str(linete[0]), str(linete[1]), str(linete[2]), 4, PC)  # sb instr, 4 cycles
             lineCount += 1
 
         elif line[0:3] == "bne":
@@ -248,13 +251,13 @@ def simulate(lisIns, debugMode):
                 if linete[2].isdigit():
                     PC = linete[2] * 4
                     lineCount = lineCount[2]
-                    stats.log(line, "bne", str(linete[0]), str(linete[1]), str(linete[2]), 4, PC)  # ADD instr, 4 cycles
+                    stats.log(line, "bne", str(linete[0]), str(linete[1]), str(linete[2]), 3, PC)  # ADD instr, 4 cycles
                 else:
                     for i in range(len(lablename)):
                         if lablename[i] == lisIns[2]:
                             PC = lableaddr[i]
                             lineCount = lableindex[i]
-                            stats.log(line, "bne", str(linete[0]), str(linete[1]), str(linete[2]), 4, PC)
+                            stats.log(line, "bne", str(linete[0]), str(linete[1]), str(linete[2]), 3, PC)
                 continue
             print("No change in registers. \n")
 
@@ -264,13 +267,13 @@ def simulate(lisIns, debugMode):
                 if linete[2].isdigit():
                     PC = linete[2] * 4
                     lineCount = lineCount[2]
-                    stats.log(line, "beq", str(linete[0]), str(linete[1]), str(linete[2]), 4, PC)  # ADD instr, 4 cycles
+                    stats.log(line, "beq", str(linete[0]), str(linete[1]), str(linete[2]), 3, PC)  # ADD instr, 4 cycles
                 else:
                     for i in range(len(lablename)):
                         if lablename[i] == lisIns[2]:
                             PC = lableaddr[i]
                             lineCount = lableindex[i]
-                            stats.log(line, "beq", str(linete[0]), str(linete[1]), str(linete[2]), 4, PC)
+                            stats.log(line, "beq", str(linete[0]), str(linete[1]), str(linete[2]), 3, PC)
                 continue
             print("No change in registers. \n")
 
