@@ -1,5 +1,9 @@
 import time
 instructions = []
+lableindex = []
+lablename = []
+lableaddr = []
+regname = []
 
 # This class keeps track of all the statistics needed for
 # simulation results.
@@ -33,7 +37,7 @@ class Statistic:
         self.stallCount = 0     #
         self.delay = 0
 
-    def log(self, I, p1, p2, p3, name, cycle, pc):
+    def log(self, I, name, p1, p2, p3, cycle, pc):
         self.I = I
         self.name = name
         self.p1 = p1
@@ -56,9 +60,14 @@ class Statistic:
             print("\n")
             print("Instruction: " + self.I)
             if (self.name == "ori"):
-                print("Cycle: " + str(self.cycle - 4) + "|PC :" + str(self.pc) + " ori $" + str(
+                print("Cycle: " + str(self.cycle - 4) + "| PC:" + str(self.pc) + " ori $" + str(
+                    self.p1) + ", $" + str(self.p2) + ", "+ str(
+                    self.p3) + "   Taking 4 cycles")
+
+            elif self.name == "addi":
+                print("Cycle: " + str(self.cycle - 4) + "| PC:" + str(self.pc) + " ori $" + str(
                     self.p1) + "," + str(self.p2) + str(
-                    self.p3) +  "   Taking 4 cycles")
+                    self.p3) + "   Taking 4 cycles")
 
             else:
                 print("")
@@ -70,6 +79,21 @@ class Statistic:
         print("                    " + str(self.threeCycles) + " instructions take 3 cycles")
         print("                    " + str(self.fourCycles) + " instructions take 4 cycles")
         print("                    " + str(self.fiveCycles) + " instructions take 5 cycles")
+
+def saveJumpLabel(asm):
+    lineCount = 0
+    global labelindex
+    global labelname
+    global labeladdr
+    for line in asm:
+        line = line.replace(" ","")
+        if line.count(":"):
+            labelname.append(line[0:line.index(":")]) # append the label name
+            labelindex.append(lineCount) # append the label's index\
+            labeladdr.append(lineCount*4)
+        lineCount += 1
+    for item in range(asm.count('\n')): # Remove all empty lines '\n'
+        asm.remove('\n')
 
 
 def readIn(s):
@@ -101,8 +125,10 @@ def simulate(lisIns, debugMode):
     Memory = [0 for i in range(1024)]
     stats = Statistic(debugMode)  # init. the statistic class, keeps track of debugmode as well
 
+
     PC = 0
     lineCount = 0
+    saveJumpLabel(lisIns)
 
     finished = False
     while lineCount < len(lisIns):
@@ -112,21 +138,70 @@ def simulate(lisIns, debugMode):
             finished = True
             print("PC = " + str(PC * 4) + "  Instruction: " + instructions[PC] + " : Deadloop. Exiting simulation")
 
-        elif (line[0:3] == 'ori'):
-            print(line)
+        elif line[0:3] == "ori":
             linete = line.replace("ori", "").replace("$", "").split(",")
             PC += 4
             Register[int(linete[0])] = Register[int(linete[1])] | int(linete[2])
-            stats.log(line, "ori", str(linete[0]), str(linete[1]), str(linete[2]), 4, PC)  # ADD instr, 4 cycles
+            stats.log(line, "ori", str(linete[0]), str(linete[1]), str(linete[2]), 4, PC)  # ori instr, 4 cycles
             lineCount += 1
+
+        elif line[0:4] == "addi":
+            linete = line.replace("addi", "").replace("$", "").replace("0x", "").split(",")
+            PC += 4
+            Register[int(linete[0])] = Register[int(linete[1])] + int(linete[2])
+            stats.log(line, "addi", str(linete[0]), str(linete[1]), str(linete[2]), 4, PC)  # addi instr, 4 cycles
+            lineCount += 1
+
+        elif line[0:4] == "sub":
+            linete = line.replace("sub", "").replace("$", "").replace("0x", "").split(",")
+            PC += 4
+            Register[int(linete[0])] = Register[int(linete[1])] - Register[int(linete[2])]
+            stats.log(line, "sub", str(linete[0]), str(linete[1]), str(linete[2]), 4, PC)  # sub instr, 4 cycles
+            lineCount += 1
+
+        elif line[0:4] == "xor":
+            linete = line.replace("xor", "").replace("$", "").split(",")
+            PC += 4
+            Register[int(linete[0])] = int(Register[int(linete[1])]) ^ int(Register[int(linete[2])])
+            stats.log(line, "xor", str(linete[0]), str(linete[1]), str(linete[2]), 4, PC)  # xor instr, 4 cycles
+            lineCount += 1
+
+        elif line[0:4] == "sll":
+            linete = line.replace("sll", "").replace("$", "").split(",")
+            PC += 4
+            Register[int(linete[0])] = Register[int(linete[1])] << int(linete[2])
+            stats.log(line, "sll", str(linete[0]), str(linete[1]), str(linete[2]), 4, PC)  # sll instr, 4 cycles
+            lineCount += 1
+
+        elif line[0:4] == "sb":
+            linete = line.replace("sb", "").replace("$", "").replace(")", "").replace("0x", "").split(",").split("(")
+            PC += 4
+            Memory[Register[int(linete[2])] + int(linete[1])] = Register[linete[0]]
+            stats.log(line, "sb", str(linete[0]), str(linete[1]), str(linete[2]), 4, PC)  # sb instr, 4 cycles
+            lineCount += 1
+
+        elif line[0:4] == "bne":
+            linete = line.replace("bne", "").replace("$", "").split(",")
+            if Register[int(linete[0])] != Register[int(linete[1])]:
+                if linete[2].isdigit():
+                    PC = linete[2] * 4
+                    lineCount = lineCount[2]
+                    stats.log(line, "bne", str(linete[0]), str(linete[1]), str(linete[2]), 4, PC)  # ADD instr, 4 cycles
+                else:
+                    for i in range(len(lablename)):
+                        if lablename[i] == lisIns[2]:
+                            PC = lableaddr[i]
+                            lineCount = lableindex[i]
+                            stats.log(line, "bne", str(linete[0]), str(linete[1]), str(linete[2]), 4, PC)
+                continue
+            print("No change in registers. \n")
 
         else:
             print("Instruction " + str(lisIns[lineCount]) + " not supported. Exiting")
             lineCount += 1
             exit()
 
-        if (not (finished)):
-            #print("Cont")
+        if not finished:
             stats.prints()
 
     if (finished):
