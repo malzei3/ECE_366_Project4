@@ -36,6 +36,8 @@ def choosemode(mode):
     global Sets
     global word_offset
     global set_offset
+    global Placement_Policy
+
     if mode == "a":
         Placement_Policy = "DM"
         blk_size = 16
@@ -55,15 +57,16 @@ def choosemode(mode):
         blk_size = 8
         N = 2
         Sets = 4
-        set_offset = int(math.log(Sets, 2))
+        set_offset = int(math.log(N, 2))
     elif mode == "d":
         Placement_Policy = "SA"
         blk_size = 8
         N = 4
         Sets = 2
-        set_offset = int(math.log(Sets, 2))
+        set_offset = int(math.log(N, 2))
     else:
-        b = int(input("Please enter block size:\n"))
+        Placement_Policy = input("Please enter the Placement Policy type DM, SA, or FA:\n")
+        blk_size = int(input("Please enter block size:\n"))
         N = int(input("Please enter number of ways:\n"))
         Sets = int(input("Please enter number of set:\n"))
         set_offset = int(math.log(Sets, 2))
@@ -75,6 +78,7 @@ def cache_simulate():
     global instructionsList
     global debugMode
     global blk_size
+    global Placement_Policy
 
     Instruction = instructionsList.copy()
 
@@ -94,8 +98,31 @@ def cache_simulate():
     print("Total number of blocks: " + str(total_blk))
     Register = [0 for i in range(24)]  # initialie all registers to 0
     Memory = [0 for i in range(mem_space)]  # initialize all memory spaces to 0
-    blocks = {new_list: [0 for i in range(3)] for new_list in range(total_blk)} # dictionary to save every block information
     Cache = [[0 for j in range(blk_size)] for i in range(total_blk)]  # Cache data
+    LRUQueue = []
+    waysQueue = []
+
+    if(Placement_Policy == "SA"):
+        blocks = {new_list: [0 for i in range(3)] for new_list in range(int(total_blk/N))}
+        ways =  []
+        for i in range(N):
+            f = {}
+            f = copy.deepcopy(blocks)
+            ways.append(f)
+
+        for i in range(int(total_blk/N)):
+            LRUQueue.append(i)
+
+        for i in range(N):
+            x = []
+            x= copy.deepcopy(LRUQueue)
+            waysQueue.append(x)
+     
+
+    else:
+        blocks = {new_list: [0 for i in range(3)] for new_list in range(total_blk)} # dictionary to save every block information
+        for i in range(total_blk):
+            LRUQueue.append(i)
     Misses = 0
     Hits = 0
     PC = 0
@@ -270,8 +297,89 @@ def cache_simulate():
                             print("Cache missed due to tag mismatch")
                             print("Tag = ",blocks[index][1])
 
+            if(Placement_Policy == "FA"):
+                found = False
+                tag = addressBin[0:16-word_offset]   #tag
+
+                for i in range(total_blk):
+                    if (blocks[i][0] == 1 and blocks[i][1] == tag): # Cache miss
+                        Hits += 1
+                        found = True
+                        if(debugMode):
+                            print("Cache hit")
+                            print("Tag = ",blocks[i][1])
+                        break
+
+                if(found == False):
+                    for i in range(total_blk):
+                        if (blocks[i][0] == 0):
+                            Misses += 1
+                            blocks[i][0] = 1
+                            blocks[i][1] = tag
+                            blocks[i][2] = Memory[address - 8192]  # Load memory into cache data
+                            LRUQueue.pop(i)
+                            LRUQueue.append(i)
+                            found = True
+                            if(debugMode):
+                                print("Cache missed")
+                                print("Tag = ",blocks[i][1])
+                            break
+
+                if(found == False):
+                    Misses += 1
+                    i = LRUQueue.pop(0)
+                    LRUQueue.append(i)
+                    blocks[i][1] = tag
+                    blocks[i][2] = Memory[address - 8192]  # Load memory into cache data
+                    if(debugMode):
+                            print("Cache missed")
+                            print("Tag = ",blocks[i][1])
+
+            if(Placement_Policy == "SA"):
+                index = addressBin[16-word_offset-set_offset:16-word_offset]
+                index = int(index,2)
+                tag = addressBin[0:16-word_offset-set_offset]#tag 
+
+                total_blkInWays = int(total_blk/N)
+
+                for i in range(total_blkInWays):
+                    if (ways[index][i][0] == 1 and ways[index][i][1] == tag): # Cache miss
+                        Hits += 1
+                        found = True
+                        if(debugMode):
+                            print("Cache hit")
+                            print("Tag = ",ways[index][i][1])
+                        break
+                
+                for i in range(total_blkInWays):
+                    if (ways[index][i][0] == 0):
+                        Misses += 1
+                        waysQueue[index].pop(i)
+                        waysQueue[index].append(i)
+                        ways[index][i][0] = 1
+                        ways[index][i][1] = tag
+                        ways[index][i][2] = Memory[address - 8192]  # Load memory into cache data
+                        found = True
+                        if(debugMode):
+                            print("Cache missed")
+                            print("Tag = ",ways[index][i][1])
+                        break
+
+                if(found == False):
+                    Misses += 1
+                    i = waysQueue[index].pop(0)
+                    waysQueue[index].append(i)
+                    ways[index][i][1] = tag
+                    ways[index][i][2] = Memory[address - 8192]  # Load memory into cache data
+                    if(debugMode):
+                            print("Cache missed")
+                            print("Tag = ",ways[index][i][1])
+                
+                if (debugMode):
+                    printInfo(Register, DIC, PC, Memory, Misses, Hits, ways)
+
             if (debugMode):
-                printInfo(Register, DIC, PC, Memory, Misses, Hits, blocks)
+                printInfo(Register, DIC, PC, Memory, Misses, Hits, ways)
             
         # *********************************************************************************************************LW
         elif (fetch[0][0] == 'lw'):  # ********LOAD WORD********
@@ -325,6 +433,87 @@ def cache_simulate():
                         if(debugMode):
                             print("Cache missed due to tag mismatch")
                             print("Tag = ",Tag[index])
+
+            if(Placement_Policy == "FA"):
+                found = False
+                tag = addressBin[0:16-word_offset]   #tag
+
+                for i in range(total_blk):
+                    if (blocks[i][0] == 1 and blocks[i][1] == tag): # Cache miss
+                        Hits += 1
+                        found = True
+                        if(debugMode):
+                            print("Cache hit")
+                            print("Tag = ",blocks[i][1])
+                        break
+                
+                for i in range(total_blk):
+                    if (blocks[i][0] == 0):
+                        Misses += 1
+                        LRUQueue.pop(i)
+                        LRUQueue.append(i)
+                        blocks[i][0] = 1
+                        blocks[i][1] = tag
+                        blocks[i][2] = Memory[address - 8192]  # Load memory into cache data
+                        found = True
+                        if(debugMode):
+                            print("Cache missed")
+                            print("Tag = ",blocks[i][1])
+                        break
+
+                if(found == False):
+                    Misses += 1
+                    i = LRUQueue.pop(0)
+                    LRUQueue.append(i)
+                    blocks[i][1] = tag
+                    blocks[i][2] = Memory[address - 8192]  # Load memory into cache data
+                    if(debugMode):
+                            print("Cache missed")
+                            print("Tag = ",blocks[i][1])
+
+            if(Placement_Policy == "SA"):
+                index = addressBin[16-word_offset-set_offset:16-word_offset]
+                index = int(index,2)
+                tag = addressBin[0:16-word_offset-set_offset]#tag 
+
+                total_blkInWays = int(total_blk/N)
+
+                for i in range(total_blkInWays):
+                    if (ways[index][i][0] == 1 and ways[index][i][1] == tag): # Cache miss
+                        Hits += 1
+                        found = True
+                        if(debugMode):
+                            print("Cache hit")
+                            print("Tag = ",ways[index][i][1])
+                        break
+                
+                for i in range(total_blkInWays):
+                    if (ways[index][i][0] == 0):
+                        Misses += 1
+                        waysQueue[index].pop(i)
+                        waysQueue[index].append(i)
+                        ways[index][i][0] = 1
+                        ways[index][i][1] = tag
+                        ways[index][i][2] = Memory[address - 8192]  # Load memory into cache data
+                        found = True
+                        if(debugMode):
+                            print("Cache missed")
+                            print("Tag = ",ways[index][i][1])
+                        break
+
+                if(found == False):
+                    Misses += 1
+                    i = waysQueue[index].pop(0)
+                    waysQueue[index].append(i)
+                    ways[index][i][1] = tag
+                    ways[index][i][2] = Memory[address - 8192]  # Load memory into cache data
+                    if(debugMode):
+                            print("Cache missed")
+                            print("Tag = ",ways[index][i][1])
+
+                if (debugMode):
+                    printInfo(Register, DIC, PC, Memory, Misses, Hits, ways)
+
 
             if (debugMode):
                 printInfo(Register, DIC, PC, Memory, Misses, Hits, blocks)
