@@ -1,9 +1,9 @@
 import time
 
 instructions = []
-lableindex = []
-lablename = []
-lableaddr = []
+labelindex = []
+labelname = []
+labeladdr = []
 regname = []
 
 # This class keeps track of all the statistics needed for
@@ -182,7 +182,10 @@ def simulate(lisIns, debugMode):
     while lineCount < len(lisIns):
         line = lisIns[lineCount]
 
-        if line[0:3] == "ori":
+        if (":" in line):
+            lineCount += 1
+
+        elif line[0:3] == "ori":
             linete = line.replace("ori", "").replace(" ", "").replace("$", "").split(",")
             PC += 4
             Register[int(linete[0])] = Register[int(linete[1])] | int(linete[2])
@@ -239,13 +242,13 @@ def simulate(lisIns, debugMode):
             linete = line.replace("sw", "").replace("$", "").replace(" ", "").replace("(", ",").replace(")", "").replace("0x", "")
             PC += 4
             linete = linete.split(",")
-            if (int(linete[2]) + int(linete[1]) % 4) == 0:
+            if (int(Register[int(linete[2])]) + int(linete[1]) % 4) == 0:
                 Memory[Register[int(linete[2])] + int(linete[1])] = Register[int(linete[0])]
                 stats.log(line, "sw", str(linete[0]), str(linete[1]), str(linete[2]), 4, PC)  # sb instr, 4 cycles
                 lineCount += 1
             else:
+                lineCount += 1
                 print("Memory address incorrect, return.\n")
-                return
 
         elif line[0:2] == "lw":
             linete = line.replace("sw", "").replace("$", "").replace(" ", "").replace("(", ",").replace(")","").replace("0x", "")
@@ -257,8 +260,8 @@ def simulate(lisIns, debugMode):
                 lineCount += 1
                 stats.NOPcount += 1
             else:
+                lineCount += 1
                 print("Memory address incorrect, return.\n")
-                return
 
         elif line[0:2] == "sb":
             linete = line.replace("sb", "").replace("$", "").replace(" ", "").replace("(", ",").replace(")","").replace("0x", "")
@@ -283,12 +286,13 @@ def simulate(lisIns, debugMode):
                     PC = linete[2] * 4
                     lineCount = lineCount[2]
                     stats.log(line, "bne", str(linete[0]), str(linete[1]), str(linete[2]), 3, PC)  # ADD instr, 4 cycles
+                    lineCount += 1
                     stats.NOPcount += 3
                 else:
-                    for i in range(len(lablename)):
-                        if lablename[i] == lisIns[2]:
-                            PC = lableaddr[i]
-                            lineCount = lableindex[i]
+                    for i in range(len(labelname)):
+                        if labelname[i] == lisIns[2]:
+                            PC = labeladdr[i]
+                            lineCount = labelindex[i]
                             stats.log(line, "bne", str(linete[0]), str(linete[1]), str(linete[2]), 3, PC)
                             stats.NOPcount += 3
                 continue
@@ -299,17 +303,19 @@ def simulate(lisIns, debugMode):
             if Register[int(linete[0])] == Register[int(linete[1])]:
                 if linete[2].isdigit():
                     PC = linete[2] * 4
-                    lineCount = lineCount[2]
+                    lineCount = lineCount[2] + 1
                     stats.log(line, "beq", str(linete[0]), str(linete[1]), str(linete[2]), 3, PC)  # ADD instr, 4 cycles
                 else:
-                    for i in range(len(lablename)):
-                        if lablename[i] == lisIns[2]:
-                            PC = lableaddr[i]
-                            lineCount = lableindex[i]
+                    for i in range(len(labelname)):
+                        if labelname[i] == lisIns[2]:
+                            PC = labeladdr[i]
+                            lineCount = labelindex[i]
                             stats.log(line, "beq", str(linete[0]), str(linete[1]), str(linete[2]), 3, PC)
                 continue
             print("No change in registers. \n")
 
+        elif line == "":
+            finished = True
 
         else:
             print("Instruction " + str(lisIns[lineCount]) + " not supported. Exiting")
