@@ -4,12 +4,11 @@ import copy
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # FUNCTION: Mc Simulation.
-def simMC():
-    print("\n\nOption 1: Processor Simulation of MC\n\n")
+def sim():
+    script_dir = os.path.dirname(__file__)  # <-- absolute dir the script is in
+    script_dir = os.path.join(script_dir, "pipe.py")
+    os.startfile(script_dir)
 
-
-def simAP():
-    print("\n\nOption 2: Processor Simulation of AP\n\n")
 
 
 # -------------------------------------------------------------------------------------------------------------------- #
@@ -691,12 +690,12 @@ def main():
     ## Keeps loop until user hits Exit.
     while True:
 
-        print("\nChoose what you’d like to do (1, 2, or 3): ", "1: Processor Simulation of MC ","2: Processor Simulation of AP ","3: Data Cache Simulator ","4: Exit", sep="\n\n")
+        print("\nChoose what you’d like to do (1, 2, or 3): ", "1: Processor Simulation of MC and AP","2: Data Cache Simulator ","3: Exit", sep="\n\n")
         
         while True:
             Input = input()
             ## Input validater 
-            if Input != '1' and Input != '2' and Input != '3' and Input != '4' :
+            if Input != '1' and Input != '2' and Input != '3':
                 print("\n\nEnter a valid input!!! -_-\n\n")
             else:
                 break
@@ -706,25 +705,12 @@ def main():
         ## -------------------------------------------------------------------------------------------------------------------- #
         ## Test Vector Generation Part 1
         if menu == 1:
-            ## Debug mode or normal mode
-            print("\nWould you like to run simulator in debug mode ?")
-            debugMode =True if  int(input("\n1: debug mode \n\n2: normal execution\n")) == 1 else False
-            instructionsList = insertMipsFile()
-            simMC()
-            
-         
-        ## -------------------------------------------------------------------------------------------------------------------- #
-        ## Fault Coverage Simulation Part 2
-        elif menu == 2:
-            ## Debug mode or normal mode
-            print("\nWould you like to run simulator in debug mode ?")
-            debugMode =True if  int(input("\n1: debug mode \n\n2: normal execution\n")) == 1 else False
-            instructionsList = insertMipsFile()
-            simAP()
+            print("\nProcessor Simulation of MC and AP will be open in different window.....\n\n")
+            sim()
             
         ## -------------------------------------------------------------------------------------------------------------------- #
         ##  Avg Fault Coverage data generation Part 3
-        elif menu == 3:
+        elif menu == 2:
             ## Debug mode or normal mode
             print("\nWould you like to run simulator in debug mode ?")
             debugMode =True if  int(input("\n1: debug mode \n\n2: normal execution\n")) == 1 else False
@@ -732,7 +718,7 @@ def main():
             cache_simulate()
         ## -------------------------------------------------------------------------------------------------------------------- #
         ##  Exit 
-        elif menu == 4:
+        elif menu == 3:
             break
 
         else:
