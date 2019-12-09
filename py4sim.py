@@ -379,7 +379,11 @@ def cache_simulate():
                     printInfo(Register, DIC, PC, Memory, Misses, Hits, ways)
 
             if (debugMode):
-                printInfo(Register, DIC, PC, Memory, Misses, Hits, ways)
+                if(Placement_Policy == "SA"):
+                    printInfo(Register, DIC, PC, Memory, Misses, Hits, ways)
+                else:
+                    printInfo(Register, DIC, PC, Memory, Misses, Hits, blocks)
+
             
         # *********************************************************************************************************LW
         elif (fetch[0][0] == 'lw'):  # ********LOAD WORD********
@@ -528,7 +532,8 @@ def printInfo(_register, _DIC, _PC,_Mem,_Misses,_Hits,_Cache):
     print('\n************** Instruction Number ' + str(_PC) + '. ' + asmCopy[_PC-1] + ' : **************\n')
     print('Registers $0 - $23: \n', _register)
     x = 64/4
-    print('Memory 8192 - 8340: \n', _Mem[0:149])
+    printWords = [sum(_Mem[i:i+4]) for i in range(0, len(_Mem), 4)]
+    print('Memory start from 8192 (Words): \n', printWords[0:100])
     print('\nDynamic instructions count: ', _DIC)
     print('PC = ', _PC*4)
     print("\n***Cache Info***")
