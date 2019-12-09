@@ -65,11 +65,23 @@ def choosemode(mode):
         Sets = 2
         set_offset = int(math.log(N, 2))
     else:
-        Placement_Policy = input("Please enter the Placement Policy type DM, SA, or FA:\n")
-        blk_size = int(input("Please enter block size:\n"))
-        N = int(input("Please enter number of ways:\n"))
-        Sets = int(input("Please enter number of set:\n"))
-        set_offset = int(math.log(Sets, 2))
+        Placement_Policy = input("Please select the Placement Policy type DM, SA, or FA:\n")
+        print("Please enter a vaild inputs correspond to the selected Placement Policy:")
+
+        #validate the input
+        while True:
+            try:
+                blk_size = int(input("Please enter block size:\n"))
+                N = int(input("Please enter number of ways:\n"))
+                Sets = int(input("Please enter number of set:\n"))
+                set_offset = int(math.log(Sets, 2))
+            except ValueError:
+                print("\n\nEnter a valid input!!! -_- \n\n")
+                continue
+            else:
+                break
+        
+
 
     word_offset = int(math.log(blk_size, 2))
 
@@ -520,7 +532,10 @@ def cache_simulate():
 
 
             if (debugMode):
-                printInfo(Register, DIC, PC, Memory, Misses, Hits, blocks)
+                if(Placement_Policy == "SA"):
+                    printInfo(Register, DIC, PC, Memory, Misses, Hits, ways)
+                else:
+                    printInfo(Register, DIC, PC, Memory, Misses, Hits, blocks)
 
 
     print("***Finished simulation***")
