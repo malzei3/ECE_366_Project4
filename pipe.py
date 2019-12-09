@@ -1,9 +1,9 @@
 import time
 
 instructions = []
-lableindex = []
-lablename = []
-lableaddr = []
+labelindex = []
+labelname = []
+labeladdr = []
 regname = []
 
 # This class keeps track of all the statistics needed for
@@ -139,6 +139,7 @@ def saveJumpLabel(asm):
             labelname.append(line[0:line.index(":")]) # append the label name
             labelindex.append(lineCount) # append the label's index\
             labeladdr.append(lineCount*4)
+            asm.pop(lineCount)
         lineCount += 1
     for item in range(asm.count('\n')): # Remove all empty lines '\n'
         asm.remove('\n')
