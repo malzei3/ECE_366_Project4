@@ -2,6 +2,7 @@ import os
 import math
 import copy
 
+# Global Var
 debugMode = False
 instructionsList = []
 asmCopy = []
@@ -77,6 +78,7 @@ class Statistic:
                     self.p1) + ", $" + str(self.p2) + ", "+ str(
                     self.p3) + "   Taking 5 cycles\n\n")
 
+                #Print updates cycle by cycles
                 if (self.programMode == "MC"):
                     print("Cycle: 1 " + "| MemtoReg: x"  + "| MemWrite: x"  + "| Branch: x"
                           + "| ALUSrc: x" + "| RegDst: x" + "| RegWrite: x")
@@ -89,12 +91,13 @@ class Statistic:
                     print("Cycle: 5 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
                           + "| ALUSrc: 1" + "| RegDst: 0" + "| RegWrite: 1")
 
+                #TODO
                 if (self.programMode == "AP"):
                     print("Cycle: 1 " + "| Pipeline Stage: "  + "| Bubble Status: "
                           + "| Stall or Flush: " + "| Which Hazard:" + "| hazard information: ")
-                    print("Cycle: 1 " + "| Pipeline Stage: "  + "| Bubble Status: "
+                    print("Cycle: 2 " + "| Pipeline Stage: "  + "| Bubble Status: "
                           + "| Stall or Flush: " + "| Which Hazard:" + "| hazard information: ")
-                    print("Cycle: 1 " + "| Pipeline Stage: "  + "| Bubble Status: "
+                    print("Cycle: 3 " + "| Pipeline Stage: "  + "| Bubble Status: "
                           + "| Stall or Flush: " + "| Which Hazard:" + "| hazard information: ")
 
             elif self.name == "addi":
@@ -113,6 +116,14 @@ class Statistic:
                           + "| ALUSrc: 1" + "| RegDst: 0" + "| RegWrite: 1")
                     print("Cycle: 5 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
                           + "| ALUSrc: 1" + "| RegDst: 0" + "| RegWrite: 1")
+
+                if (self.programMode == "AP"):
+                    print("Cycle: 1 " + "| Pipeline Stage: "  + "| Bubble Status: "
+                          + "| Stall or Flush: " + "| Which Hazard:" + "| hazard information: ")
+                    print("Cycle: 2 " + "| Pipeline Stage: "  + "| Bubble Status: "
+                          + "| Stall or Flush: " + "| Which Hazard:" + "| hazard information: ")
+                    print("Cycle: 3 " + "| Pipeline Stage: "  + "| Bubble Status: "
+                          + "| Stall or Flush: " + "| Which Hazard:" + "| hazard information: ")
                 
             elif self.name == "addu":
                 print("Cycle: " + str(self.cycle - 4) + "| PC:" + str(self.pc) + " addu $" + str(
@@ -129,6 +140,14 @@ class Statistic:
                     print("Cycle: 4 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
                           + "| ALUSrc: 0" + "| RegDst: 1" + "| RegWrite: 1")
 
+                if (self.programMode == "AP"):
+                    print("Cycle: 1 " + "| Pipeline Stage: "  + "| Bubble Status: "
+                          + "| Stall or Flush: " + "| Which Hazard:" + "| hazard information: ")
+                    print("Cycle: 2 " + "| Pipeline Stage: "  + "| Bubble Status: "
+                          + "| Stall or Flush: " + "| Which Hazard:" + "| hazard information: ")
+                    print("Cycle: 3 " + "| Pipeline Stage: "  + "| Bubble Status: "
+                          + "| Stall or Flush: " + "| Which Hazard:" + "| hazard information: ")
+
             elif self.name == "beq":
                 print("Cycle: " + str(self.cycle - 3) + "| PC:" + str(self.pc) + " beq $" + str(
                     self.p1) + ", " + str(self.p2) + ", " + str(
@@ -143,6 +162,15 @@ class Statistic:
                           + "| ALUSrc: 0" + "| RegDst: x" + "| RegWrite: 0")
 
 
+                if (self.programMode == "AP"):
+                    print("Cycle: 1 " + "| Pipeline Stage: "  + "| Bubble Status: "
+                          + "| Stall or Flush: " + "| Which Hazard:" + "| hazard information: ")
+                    print("Cycle: 2 " + "| Pipeline Stage: "  + "| Bubble Status: "
+                          + "| Stall or Flush: " + "| Which Hazard:" + "| hazard information: ")
+                    print("Cycle: 3 " + "| Pipeline Stage: "  + "| Bubble Status: "
+                          + "| Stall or Flush: " + "| Which Hazard:" + "| hazard information: ")
+
+
             elif self.name == "bne":
                 print("Cycle: " + str(self.cycle - 3) + "| PC:" + str(self.pc) + " bne $" + str(
                     self.p1) + ", " + str(self.p2) + ", " + str(
@@ -155,6 +183,15 @@ class Statistic:
                           + "| ALUSrc: 0" + "| RegDst: x" + "| RegWrite: 0")
                     print("Cycle: 3 " + "| MemtoReg: x"  + "| MemWrite: 0"  + "| Branch: 1"
                           + "| ALUSrc: 0" + "| RegDst: x" + "| RegWrite: 0")
+
+                if (self.programMode == "AP"):
+                    print("Cycle: 1 " + "| Pipeline Stage: "  + "| Bubble Status: "
+                          + "| Stall or Flush: " + "| Which Hazard:" + "| hazard information: ")
+                    print("Cycle: 2 " + "| Pipeline Stage: "  + "| Bubble Status: "
+                          + "| Stall or Flush: " + "| Which Hazard:" + "| hazard information: ")
+                    print("Cycle: 3 " + "| Pipeline Stage: "  + "| Bubble Status: "
+                          + "| Stall or Flush: " + "| Which Hazard:" + "| hazard information: ")
+
 
             elif self.name == "sll":
                 print("Cycle: " + str(self.cycle - 4) + "| PC:" + str(self.pc) + " sll $" + str(
@@ -171,6 +208,14 @@ class Statistic:
                     print("Cycle: 4 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
                           + "| ALUSrc: 0" + "| RegDst: 1" + "| RegWrite: 1")
 
+                if (self.programMode == "AP"):
+                    print("Cycle: 1 " + "| Pipeline Stage: "  + "| Bubble Status: "
+                          + "| Stall or Flush: " + "| Which Hazard:" + "| hazard information: ")
+                    print("Cycle: 2 " + "| Pipeline Stage: "  + "| Bubble Status: "
+                          + "| Stall or Flush: " + "| Which Hazard:" + "| hazard information: ")
+                    print("Cycle: 3 " + "| Pipeline Stage: "  + "| Bubble Status: "
+                          + "| Stall or Flush: " + "| Which Hazard:" + "| hazard information: ")
+
             elif self.name == "sub":
                 print("Cycle: " + str(self.cycle - 4) + "| PC:" + str(self.pc) + " sub $" + str(
                     self.p1) + ", $" + str(self.p2) + ", $" + str(
@@ -185,6 +230,15 @@ class Statistic:
                           + "| ALUSrc: 0" + "| RegDst: 1" + "| RegWrite: 1")
                     print("Cycle: 4 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
                           + "| ALUSrc: 0" + "| RegDst: 1" + "| RegWrite: 1")
+
+
+                if (self.programMode == "AP"):
+                    print("Cycle: 1 " + "| Pipeline Stage: "  + "| Bubble Status: "
+                          + "| Stall or Flush: " + "| Which Hazard:" + "| hazard information: ")
+                    print("Cycle: 2 " + "| Pipeline Stage: "  + "| Bubble Status: "
+                          + "| Stall or Flush: " + "| Which Hazard:" + "| hazard information: ")
+                    print("Cycle: 3 " + "| Pipeline Stage: "  + "| Bubble Status: "
+                          + "| Stall or Flush: " + "| Which Hazard:" + "| hazard information: ")
 
             elif self.name == "xor":
                 print("Cycle: " + str(self.cycle - 4) + "| PC:" + str(self.pc) + " xor $" + str(
@@ -201,6 +255,14 @@ class Statistic:
                     print("Cycle: 4 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
                           + "| ALUSrc: 0" + "| RegDst: 1" + "| RegWrite: 1")
 
+                if (self.programMode == "AP"):
+                    print("Cycle: 1 " + "| Pipeline Stage: "  + "| Bubble Status: "
+                          + "| Stall or Flush: " + "| Which Hazard:" + "| hazard information: ")
+                    print("Cycle: 2 " + "| Pipeline Stage: "  + "| Bubble Status: "
+                          + "| Stall or Flush: " + "| Which Hazard:" + "| hazard information: ")
+                    print("Cycle: 3 " + "| Pipeline Stage: "  + "| Bubble Status: "
+                          + "| Stall or Flush: " + "| Which Hazard:" + "| hazard information: ")
+
             elif self.name == "slt":
                 print("Cycle: " + str(self.cycle - 4) + "| PC:" + str(self.pc) + " slt $" + str(
                     self.p1) + ", $" + str(self.p2) + ", $" + str(
@@ -215,6 +277,14 @@ class Statistic:
                           + "| ALUSrc: 0" + "| RegDst: 1" + "| RegWrite: 1")
                     print("Cycle: 4 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
                           + "| ALUSrc: 0" + "| RegDst: 1" + "| RegWrite: 1")
+
+                if (self.programMode == "AP"):
+                    print("Cycle: 1 " + "| Pipeline Stage: "  + "| Bubble Status: "
+                          + "| Stall or Flush: " + "| Which Hazard:" + "| hazard information: ")
+                    print("Cycle: 2 " + "| Pipeline Stage: "  + "| Bubble Status: "
+                          + "| Stall or Flush: " + "| Which Hazard:" + "| hazard information: ")
+                    print("Cycle: 3 " + "| Pipeline Stage: "  + "| Bubble Status: "
+                          + "| Stall or Flush: " + "| Which Hazard:" + "| hazard information: ")
 
 
             #sb $t, offset($s)
@@ -235,6 +305,14 @@ class Statistic:
                     print("Cycle: 5 " + "| MemtoReg: x"  + "| MemWrite: 1"  + "| Branch: 0"
                           + "| ALUSrc: 1" + "| RegDst: x" + "| RegWrite: 0")
 
+                if (self.programMode == "AP"):
+                    print("Cycle: 1 " + "| Pipeline Stage: "  + "| Bubble Status: "
+                          + "| Stall or Flush: " + "| Which Hazard:" + "| hazard information: ")
+                    print("Cycle: 2 " + "| Pipeline Stage: "  + "| Bubble Status: "
+                          + "| Stall or Flush: " + "| Which Hazard:" + "| hazard information: ")
+                    print("Cycle: 3 " + "| Pipeline Stage: "  + "| Bubble Status: "
+                          + "| Stall or Flush: " + "| Which Hazard:" + "| hazard information: ")
+
 
             #lw $t, offset($s)
             elif self.name == "lb":
@@ -254,6 +332,14 @@ class Statistic:
                     print("Cycle: 5 " + "| MemtoReg: x"  + "| MemWrite: 0"  + "| Branch: 0"
                           + "| ALUSrc: 1" + "| RegDst: 0" + "| RegWrite: 1")
 
+                if (self.programMode == "AP"):
+                    print("Cycle: 1 " + "| Pipeline Stage: "  + "| Bubble Status: "
+                          + "| Stall or Flush: " + "| Which Hazard:" + "| hazard information: ")
+                    print("Cycle: 2 " + "| Pipeline Stage: "  + "| Bubble Status: "
+                          + "| Stall or Flush: " + "| Which Hazard:" + "| hazard information: ")
+                    print("Cycle: 3 " + "| Pipeline Stage: "  + "| Bubble Status: "
+                          + "| Stall or Flush: " + "| Which Hazard:" + "| hazard information: ")
+
 
             elif self.name == "sw":
                 print("Cycle: " + str(self.cycle - 5) + "| PC:" + str(self.pc) + " sw $" + str(
@@ -271,6 +357,14 @@ class Statistic:
                           + "| ALUSrc: 1" + "| RegDst: x" + "| RegWrite: 0")
                     print("Cycle: 5 " + "| MemtoReg: x"  + "| MemWrite: 1"  + "| Branch: 0"
                           + "| ALUSrc: 1" + "| RegDst: x" + "| RegWrite: 0")
+
+                if (self.programMode == "AP"):
+                    print("Cycle: 1 " + "| Pipeline Stage: "  + "| Bubble Status: "
+                          + "| Stall or Flush: " + "| Which Hazard:" + "| hazard information: ")
+                    print("Cycle: 2 " + "| Pipeline Stage: "  + "| Bubble Status: "
+                          + "| Stall or Flush: " + "| Which Hazard:" + "| hazard information: ")
+                    print("Cycle: 3 " + "| Pipeline Stage: "  + "| Bubble Status: "
+                          + "| Stall or Flush: " + "| Which Hazard:" + "| hazard information: ")
 
 
             elif self.name == "lw":
@@ -290,6 +384,14 @@ class Statistic:
                     print("Cycle: 5 " + "| MemtoReg: x"  + "| MemWrite: 0"  + "| Branch: 0"
                           + "| ALUSrc: 1" + "| RegDst: 0" + "| RegWrite: 1")
 
+                if (self.programMode == "AP"):
+                    print("Cycle: 1 " + "| Pipeline Stage: "  + "| Bubble Status: "
+                          + "| Stall or Flush: " + "| Which Hazard:" + "| hazard information: ")
+                    print("Cycle: 2 " + "| Pipeline Stage: "  + "| Bubble Status: "
+                          + "| Stall or Flush: " + "| Which Hazard:" + "| hazard information: ")
+                    print("Cycle: 3 " + "| Pipeline Stage: "  + "| Bubble Status: "
+                          + "| Stall or Flush: " + "| Which Hazard:" + "| hazard information: ")
+
             else:
                 print("")
 
@@ -302,6 +404,7 @@ class Statistic:
             print("Four Cycles: " + str(self.fourCycles) + " instructions take 4 cycles")
             print("Five Cycles: " + str(self.fiveCycles) + " instructions take 5 cycles")
 
+        #TODO
         if (self.programMode == "AP"):
             print("Statistics of delays: " + str(self.delay))
             print("Statistics of forward-path usage: " + str(self.delay))
@@ -1269,7 +1372,7 @@ def main():
     ## Keeps loop until user hits Exit.
     while True:
 
-        print("\nChoose what you’d like to do (1, 2, or 3): ", "1: Processor Simulation of AP", "2: Processor Simulation of MC", "3: Data Cache Simulator ","4: Exit", sep="\n\n")
+        print("\nChoose what you’d like to do (1, 2, or 3): ", "1: Processor Simulation of MC", "2: Processor Simulation of AP", "3: Data Cache Simulator ","4: Exit", sep="\n\n")
         
         while True:
             Input = input()
