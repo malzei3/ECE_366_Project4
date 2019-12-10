@@ -14,12 +14,13 @@ set_offset = 0
 mem_space = 1024
 blocks = {}
 menu = 0
+programMode = "AP"
 
 # This class keeps track of all the statistics needed for
 # simulation results.
 # Feel free to add any stats
 class Statistic:
-    def __init__(self, debugMode):
+    def __init__(self, debugMode, programMode):
         self.I = ""  # Current instr being executed
         self.name = ""  # name of the instruction
         self.p1 = 0
@@ -30,6 +31,8 @@ class Statistic:
         self.threeCycles = 0  # How many instr that took 3 cycles to execute
         self.fourCycles = 0  # 4 cycles
         self.fiveCycles = 0  # 5 cycles
+        self.programMode = programMode
+
         #MC
         self.MemtoReg = 0
         self.MemWrite = 0
@@ -70,212 +73,242 @@ class Statistic:
             print("\n")
             print("Instruction: " + self.I)
             if self.name == "ori":
-                print("Cycle: " + str(self.cycle - 4) + "| PC:" + str(self.pc) + " ori $" + str(
+                print("Cycle: " + str(self.cycle - 5) + "| PC:" + str(self.pc) + " ori $" + str(
                     self.p1) + ", $" + str(self.p2) + ", "+ str(
                     self.p3) + "   Taking 5 cycles\n\n")
 
-                print("Cycle: 1 " + "| MemtoReg: x"  + "| MemWrite: x"  + "| Branch: x"
-                      + "| ALUSrc: x" + "| RegDst: x" + "| RegWrite: x")
-                print("Cycle: 2 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
-                      + "| ALUSrc: 1" + "| RegDst: 0" + "| RegWrite: 1")
-                print("Cycle: 3 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
-                      + "| ALUSrc: 1" + "| RegDst: 0" + "| RegWrite: 1")
-                print("Cycle: 4 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
-                      + "| ALUSrc: 1" + "| RegDst: 0" + "| RegWrite: 1")
-                print("Cycle: 5 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
-                      + "| ALUSrc: 1" + "| RegDst: 0" + "| RegWrite: 1")
+                if (self.programMode == "MC"):
+                    print("Cycle: 1 " + "| MemtoReg: x"  + "| MemWrite: x"  + "| Branch: x"
+                          + "| ALUSrc: x" + "| RegDst: x" + "| RegWrite: x")
+                    print("Cycle: 2 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
+                          + "| ALUSrc: 1" + "| RegDst: 0" + "| RegWrite: 1")
+                    print("Cycle: 3 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
+                          + "| ALUSrc: 1" + "| RegDst: 0" + "| RegWrite: 1")
+                    print("Cycle: 4 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
+                          + "| ALUSrc: 1" + "| RegDst: 0" + "| RegWrite: 1")
+                    print("Cycle: 5 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
+                          + "| ALUSrc: 1" + "| RegDst: 0" + "| RegWrite: 1")
+
+                if (self.programMode == "AP"):
+                    print("Cycle: 1 " + "| Pipeline Stage: "  + "| Bubble Status: "
+                          + "| Stall or Flush: " + "| Which Hazard:" + "| hazard information: ")
+                    print("Cycle: 1 " + "| Pipeline Stage: "  + "| Bubble Status: "
+                          + "| Stall or Flush: " + "| Which Hazard:" + "| hazard information: ")
+                    print("Cycle: 1 " + "| Pipeline Stage: "  + "| Bubble Status: "
+                          + "| Stall or Flush: " + "| Which Hazard:" + "| hazard information: ")
 
             elif self.name == "addi":
-                print("Cycle: " + str(self.cycle - 4) + "| PC:" + str(self.pc) + " addi $" + str(
+                print("Cycle: " + str(self.cycle - 5) + "| PC:" + str(self.pc) + " addi $" + str(
                     self.p1) + ", $" + str(self.p2) + ", " + str(
                     self.p3) + "   Taking 5 cycles")
 
-                
-                print("Cycle: 1 " + "| MemtoReg: x"  + "| MemWrite: x"  + "| Branch: x"
-                      + "| ALUSrc: x" + "| RegDst: x" + "| RegWrite: x")
-                print("Cycle: 2 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
-                      + "| ALUSrc: 1" + "| RegDst: 0" + "| RegWrite: 1")
-                print("Cycle: 3 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
-                      + "| ALUSrc: 1" + "| RegDst: 0" + "| RegWrite: 1")
-                print("Cycle: 4 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
-                      + "| ALUSrc: 1" + "| RegDst: 0" + "| RegWrite: 1")
-                print("Cycle: 5 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
-                      + "| ALUSrc: 1" + "| RegDst: 0" + "| RegWrite: 1")
+                if (self.programMode == "MC"):
+                    print("Cycle: 1 " + "| MemtoReg: x"  + "| MemWrite: x"  + "| Branch: x"
+                          + "| ALUSrc: x" + "| RegDst: x" + "| RegWrite: x")
+                    print("Cycle: 2 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
+                          + "| ALUSrc: 1" + "| RegDst: 0" + "| RegWrite: 1")
+                    print("Cycle: 3 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
+                          + "| ALUSrc: 1" + "| RegDst: 0" + "| RegWrite: 1")
+                    print("Cycle: 4 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
+                          + "| ALUSrc: 1" + "| RegDst: 0" + "| RegWrite: 1")
+                    print("Cycle: 5 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
+                          + "| ALUSrc: 1" + "| RegDst: 0" + "| RegWrite: 1")
                 
             elif self.name == "addu":
                 print("Cycle: " + str(self.cycle - 4) + "| PC:" + str(self.pc) + " addu $" + str(
                     self.p1) + ", $" + str(self.p2) + ", $" + str(
                     self.p3) + "   Taking 4 cycles")
 
-                 print("Cycle: 1 " + "| MemtoReg: x"  + "| MemWrite: x"  + "| Branch: x"
-                      + "| ALUSrc: x" + "| RegDst: x" + "| RegWrite: x")
-                print("Cycle: 2 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
-                      + "| ALUSrc: 0" + "| RegDst: 1" + "| RegWrite: 1")
-                print("Cycle: 3 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
-                      + "| ALUSrc: 0" + "| RegDst: 1" + "| RegWrite: 1")
-                print("Cycle: 4 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
-                      + "| ALUSrc: 0" + "| RegDst: 1" + "| RegWrite: 1")
+                if (self.programMode == "MC"):
+                    print("Cycle: 1 " + "| MemtoReg: x"  + "| MemWrite: x"  + "| Branch: x"
+                          + "| ALUSrc: x" + "| RegDst: x" + "| RegWrite: x")
+                    print("Cycle: 2 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
+                          + "| ALUSrc: 0" + "| RegDst: 1" + "| RegWrite: 1")
+                    print("Cycle: 3 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
+                          + "| ALUSrc: 0" + "| RegDst: 1" + "| RegWrite: 1")
+                    print("Cycle: 4 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
+                          + "| ALUSrc: 0" + "| RegDst: 1" + "| RegWrite: 1")
 
             elif self.name == "beq":
                 print("Cycle: " + str(self.cycle - 3) + "| PC:" + str(self.pc) + " beq $" + str(
                     self.p1) + ", " + str(self.p2) + ", " + str(
                     self.p3) + "   Taking 3 cycles")
 
-                 print("Cycle: 1 " + "| MemtoReg: x"  + "| MemWrite: x"  + "| Branch: x"
-                      + "| ALUSrc: x" + "| RegDst: x" + "| RegWrite: x")
-                print("Cycle: 2 " + "| MemtoReg: x"  + "| MemWrite: 0"  + "| Branch: 1"
-                      + "| ALUSrc: 0" + "| RegDst: x" + "| RegWrite: 0")
-                print("Cycle: 3 " + "| MemtoReg: x"  + "| MemWrite: 0"  + "| Branch: 1"
-                      + "| ALUSrc: 0" + "| RegDst: x" + "| RegWrite: 0")
+                if (self.programMode == "MC"):
+                    print("Cycle: 1 " + "| MemtoReg: x"  + "| MemWrite: x"  + "| Branch: x"
+                          + "| ALUSrc: x" + "| RegDst: x" + "| RegWrite: x")
+                    print("Cycle: 2 " + "| MemtoReg: x"  + "| MemWrite: 0"  + "| Branch: 1"
+                          + "| ALUSrc: 0" + "| RegDst: x" + "| RegWrite: 0")
+                    print("Cycle: 3 " + "| MemtoReg: x"  + "| MemWrite: 0"  + "| Branch: 1"
+                          + "| ALUSrc: 0" + "| RegDst: x" + "| RegWrite: 0")
+
 
             elif self.name == "bne":
                 print("Cycle: " + str(self.cycle - 3) + "| PC:" + str(self.pc) + " bne $" + str(
                     self.p1) + ", " + str(self.p2) + ", " + str(
                     self.p3) + "   Taking 3 cycles")
 
-                 print("Cycle: 1 " + "| MemtoReg: x"  + "| MemWrite: x"  + "| Branch: x"
-                      + "| ALUSrc: x" + "| RegDst: x" + "| RegWrite: x")
-                print("Cycle: 2 " + "| MemtoReg: x"  + "| MemWrite: 0"  + "| Branch: 1"
-                      + "| ALUSrc: 0" + "| RegDst: x" + "| RegWrite: 0")
-                print("Cycle: 3 " + "| MemtoReg: x"  + "| MemWrite: 0"  + "| Branch: 1"
-                      + "| ALUSrc: 0" + "| RegDst: x" + "| RegWrite: 0")
+                if (self.programMode == "MC"):
+                    print("Cycle: 1 " + "| MemtoReg: x"  + "| MemWrite: x"  + "| Branch: x"
+                          + "| ALUSrc: x" + "| RegDst: x" + "| RegWrite: x")
+                    print("Cycle: 2 " + "| MemtoReg: x"  + "| MemWrite: 0"  + "| Branch: 1"
+                          + "| ALUSrc: 0" + "| RegDst: x" + "| RegWrite: 0")
+                    print("Cycle: 3 " + "| MemtoReg: x"  + "| MemWrite: 0"  + "| Branch: 1"
+                          + "| ALUSrc: 0" + "| RegDst: x" + "| RegWrite: 0")
 
             elif self.name == "sll":
                 print("Cycle: " + str(self.cycle - 4) + "| PC:" + str(self.pc) + " sll $" + str(
                     self.p1) + ", $" + str(self.p2) + ", " + str(
                     self.p3) + "   Taking 4 cycles")
 
-                 print("Cycle: 1 " + "| MemtoReg: x"  + "| MemWrite: x"  + "| Branch: x"
-                      + "| ALUSrc: x" + "| RegDst: x" + "| RegWrite: x")
-                print("Cycle: 2 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
-                      + "| ALUSrc: 0" + "| RegDst: 1" + "| RegWrite: 1")
-                print("Cycle: 3 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
-                      + "| ALUSrc: 0" + "| RegDst: 1" + "| RegWrite: 1")
-                print("Cycle: 4 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
-                      + "| ALUSrc: 0" + "| RegDst: 1" + "| RegWrite: 1")
+                if (self.programMode == "MC"):
+                    print("Cycle: 1 " + "| MemtoReg: x"  + "| MemWrite: x"  + "| Branch: x"
+                          + "| ALUSrc: x" + "| RegDst: x" + "| RegWrite: x")
+                    print("Cycle: 2 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
+                          + "| ALUSrc: 0" + "| RegDst: 1" + "| RegWrite: 1")
+                    print("Cycle: 3 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
+                          + "| ALUSrc: 0" + "| RegDst: 1" + "| RegWrite: 1")
+                    print("Cycle: 4 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
+                          + "| ALUSrc: 0" + "| RegDst: 1" + "| RegWrite: 1")
 
             elif self.name == "sub":
                 print("Cycle: " + str(self.cycle - 4) + "| PC:" + str(self.pc) + " sub $" + str(
                     self.p1) + ", $" + str(self.p2) + ", $" + str(
                     self.p3) + "   Taking 4 cycles")
 
-                print("Cycle: 1 " + "| MemtoReg: x"  + "| MemWrite: x"  + "| Branch: x"
-                      + "| ALUSrc: x" + "| RegDst: x" + "| RegWrite: x")
-                print("Cycle: 2 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
-                      + "| ALUSrc: 0" + "| RegDst: 1" + "| RegWrite: 1")
-                print("Cycle: 3 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
-                      + "| ALUSrc: 0" + "| RegDst: 1" + "| RegWrite: 1")
-                print("Cycle: 4 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
-                      + "| ALUSrc: 0" + "| RegDst: 1" + "| RegWrite: 1")
+                if (self.programMode == "MC"):
+                    print("Cycle: 1 " + "| MemtoReg: x"  + "| MemWrite: x"  + "| Branch: x"
+                          + "| ALUSrc: x" + "| RegDst: x" + "| RegWrite: x")
+                    print("Cycle: 2 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
+                          + "| ALUSrc: 0" + "| RegDst: 1" + "| RegWrite: 1")
+                    print("Cycle: 3 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
+                          + "| ALUSrc: 0" + "| RegDst: 1" + "| RegWrite: 1")
+                    print("Cycle: 4 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
+                          + "| ALUSrc: 0" + "| RegDst: 1" + "| RegWrite: 1")
 
             elif self.name == "xor":
                 print("Cycle: " + str(self.cycle - 4) + "| PC:" + str(self.pc) + " xor $" + str(
                     self.p1) + ", $" + str(self.p2) + ", $" + str(
                     self.p3) + "   Taking 4 cycles")
 
-                print("Cycle: 1 " + "| MemtoReg: x"  + "| MemWrite: x"  + "| Branch: x"
-                      + "| ALUSrc: x" + "| RegDst: x" + "| RegWrite: x")
-                print("Cycle: 2 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
-                      + "| ALUSrc: 0" + "| RegDst: 1" + "| RegWrite: 1")
-                print("Cycle: 3 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
-                      + "| ALUSrc: 0" + "| RegDst: 1" + "| RegWrite: 1")
-                print("Cycle: 4 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
-                      + "| ALUSrc: 0" + "| RegDst: 1" + "| RegWrite: 1")
+                if (self.programMode == "MC"):
+                    print("Cycle: 1 " + "| MemtoReg: x"  + "| MemWrite: x"  + "| Branch: x"
+                          + "| ALUSrc: x" + "| RegDst: x" + "| RegWrite: x")
+                    print("Cycle: 2 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
+                          + "| ALUSrc: 0" + "| RegDst: 1" + "| RegWrite: 1")
+                    print("Cycle: 3 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
+                          + "| ALUSrc: 0" + "| RegDst: 1" + "| RegWrite: 1")
+                    print("Cycle: 4 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
+                          + "| ALUSrc: 0" + "| RegDst: 1" + "| RegWrite: 1")
 
             elif self.name == "slt":
                 print("Cycle: " + str(self.cycle - 4) + "| PC:" + str(self.pc) + " slt $" + str(
                     self.p1) + ", $" + str(self.p2) + ", $" + str(
                     self.p3) + "   Taking 4 cycles")
 
-                 print("Cycle: 1 " + "| MemtoReg: x"  + "| MemWrite: x"  + "| Branch: x"
-                      + "| ALUSrc: x" + "| RegDst: x" + "| RegWrite: x")
-                print("Cycle: 2 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
-                      + "| ALUSrc: 0" + "| RegDst: 1" + "| RegWrite: 1")
-                print("Cycle: 3 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
-                      + "| ALUSrc: 0" + "| RegDst: 1" + "| RegWrite: 1")
-                print("Cycle: 4 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
-                      + "| ALUSrc: 0" + "| RegDst: 1" + "| RegWrite: 1")
+                if (self.programMode == "MC"):
+                    print("Cycle: 1 " + "| MemtoReg: x"  + "| MemWrite: x"  + "| Branch: x"
+                          + "| ALUSrc: x" + "| RegDst: x" + "| RegWrite: x")
+                    print("Cycle: 2 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
+                          + "| ALUSrc: 0" + "| RegDst: 1" + "| RegWrite: 1")
+                    print("Cycle: 3 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
+                          + "| ALUSrc: 0" + "| RegDst: 1" + "| RegWrite: 1")
+                    print("Cycle: 4 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
+                          + "| ALUSrc: 0" + "| RegDst: 1" + "| RegWrite: 1")
+
 
             #sb $t, offset($s)
             elif self.name == "sb":
-                print("Cycle: " + str(self.cycle - 4) + "| PC:" + str(self.pc) + " sb $" + str(
+                print("Cycle: " + str(self.cycle - 5) + "| PC:" + str(self.pc) + " sb $" + str(
                     self.p1) + ", " + str(self.p2) + "($" + str(
                     self.p3) + ")   Taking 5 cycles")
-                
-                 print("Cycle: 1 x" + "| MemtoReg: x"  + "| MemWrite: x"  + "| Branch: x"
-                      + "| ALUSrc: x" + "| RegDst: x" + "| RegWrite: x")
-                print("Cycle: 2 " + "| MemtoReg: x"  + "| MemWrite: 1"  + "| Branch: 0"
-                      + "| ALUSrc: 1" + "| RegDst: x" + "| RegWrite: 0")
-                print("Cycle: 3 " + "| MemtoReg: x"  + "| MemWrite: 1"  + "| Branch: 0"
-                      + "| ALUSrc: 1" + "| RegDst: x" + "| RegWrite: 0")
-                print("Cycle: 4 " + "| MemtoReg: x"  + "| MemWrite: 1"  + "| Branch: 0"
-                      + "| ALUSrc: 1" + "| RegDst: x" + "| RegWrite: 0")
-                print("Cycle: 5 " + "| MemtoReg: x"  + "| MemWrite: 1"  + "| Branch: 0"
-                      + "| ALUSrc: 1" + "| RegDst: x" + "| RegWrite: 0")
+
+                if (self.programMode == "MC"):
+                    print("Cycle: 1 x" + "| MemtoReg: x"  + "| MemWrite: x"  + "| Branch: x"
+                          + "| ALUSrc: x" + "| RegDst: x" + "| RegWrite: x")
+                    print("Cycle: 2 " + "| MemtoReg: x"  + "| MemWrite: 1"  + "| Branch: 0"
+                          + "| ALUSrc: 1" + "| RegDst: x" + "| RegWrite: 0")
+                    print("Cycle: 3 " + "| MemtoReg: x"  + "| MemWrite: 1"  + "| Branch: 0"
+                          + "| ALUSrc: 1" + "| RegDst: x" + "| RegWrite: 0")
+                    print("Cycle: 4 " + "| MemtoReg: x"  + "| MemWrite: 1"  + "| Branch: 0"
+                          + "| ALUSrc: 1" + "| RegDst: x" + "| RegWrite: 0")
+                    print("Cycle: 5 " + "| MemtoReg: x"  + "| MemWrite: 1"  + "| Branch: 0"
+                          + "| ALUSrc: 1" + "| RegDst: x" + "| RegWrite: 0")
+
 
             #lw $t, offset($s)
             elif self.name == "lb":
-                print("Cycle: " + str(self.cycle - 4) + "| PC:" + str(self.pc) + " lb $" + str(
+                print("Cycle: " + str(self.cycle - 5) + "| PC:" + str(self.pc) + " lb $" + str(
                     self.p1) + ", " + str(self.p2) + "($" + str(
                     self.p3) + ")   Taking 5 cycles")
 
-                 print("Cycle: 1 " + "| MemtoReg: x"  + "| MemWrite: x"  + "| Branch: x"
-                      + "| ALUSrc: x" + "| RegDst: x" + "| RegWrite: x")
-                print("Cycle: 2 " + "| MemtoReg: 1"  + "| MemWrite: 0"  + "| Branch: 0"
-                      + "| ALUSrc: 1" + "| RegDst: 0" + "| RegWrite: 1")
-                print("Cycle: 3 " + "| MemtoReg: x"  + "| MemWrite: 0"  + "| Branch: 0"
-                      + "| ALUSrc: 1" + "| RegDst: 0" + "| RegWrite: 1")
-                print("Cycle: 4 " + "| MemtoReg: 1"  + "| MemWrite: 0"  + "| Branch: 0"
-                      + "| ALUSrc: 1" + "| RegDst: 0" + "| RegWrite: 1")
-                print("Cycle: 5 " + "| MemtoReg: x"  + "| MemWrite: 0"  + "| Branch: 0"
-                      + "| ALUSrc: 1" + "| RegDst: 0" + "| RegWrite: 1")
+                if (self.programMode == "MC"):
+                    print("Cycle: 1 " + "| MemtoReg: x"  + "| MemWrite: x"  + "| Branch: x"
+                          + "| ALUSrc: x" + "| RegDst: x" + "| RegWrite: x")
+                    print("Cycle: 2 " + "| MemtoReg: 1"  + "| MemWrite: 0"  + "| Branch: 0"
+                          + "| ALUSrc: 1" + "| RegDst: 0" + "| RegWrite: 1")
+                    print("Cycle: 3 " + "| MemtoReg: x"  + "| MemWrite: 0"  + "| Branch: 0"
+                          + "| ALUSrc: 1" + "| RegDst: 0" + "| RegWrite: 1")
+                    print("Cycle: 4 " + "| MemtoReg: 1"  + "| MemWrite: 0"  + "| Branch: 0"
+                          + "| ALUSrc: 1" + "| RegDst: 0" + "| RegWrite: 1")
+                    print("Cycle: 5 " + "| MemtoReg: x"  + "| MemWrite: 0"  + "| Branch: 0"
+                          + "| ALUSrc: 1" + "| RegDst: 0" + "| RegWrite: 1")
+
 
             elif self.name == "sw":
-                print("Cycle: " + str(self.cycle - 4) + "| PC:" + str(self.pc) + " sw $" + str(
+                print("Cycle: " + str(self.cycle - 5) + "| PC:" + str(self.pc) + " sw $" + str(
                     self.p1) + ", " + str(self.p2) + "($" + str(
                     self.p3) + ")   Taking 5 cycles")
 
-                 print("Cycle: 1 x" + "| MemtoReg: x"  + "| MemWrite: x"  + "| Branch: x"
-                      + "| ALUSrc: x" + "| RegDst: x" + "| RegWrite: x")
-                print("Cycle: 2 " + "| MemtoReg: x"  + "| MemWrite: 1"  + "| Branch: 0"
-                      + "| ALUSrc: 1" + "| RegDst: x" + "| RegWrite: 0")
-                print("Cycle: 3 " + "| MemtoReg: x"  + "| MemWrite: 1"  + "| Branch: 0"
-                      + "| ALUSrc: 1" + "| RegDst: x" + "| RegWrite: 0")
-                print("Cycle: 4 " + "| MemtoReg: x"  + "| MemWrite: 1"  + "| Branch: 0"
-                      + "| ALUSrc: 1" + "| RegDst: x" + "| RegWrite: 0")
-                print("Cycle: 5 " + "| MemtoReg: x"  + "| MemWrite: 1"  + "| Branch: 0"
-                      + "| ALUSrc: 1" + "| RegDst: x" + "| RegWrite: 0")
+                if (self.programMode == "MC"):
+                    print("Cycle: 1 x" + "| MemtoReg: x"  + "| MemWrite: x"  + "| Branch: x"
+                          + "| ALUSrc: x" + "| RegDst: x" + "| RegWrite: x")
+                    print("Cycle: 2 " + "| MemtoReg: x"  + "| MemWrite: 1"  + "| Branch: 0"
+                          + "| ALUSrc: 1" + "| RegDst: x" + "| RegWrite: 0")
+                    print("Cycle: 3 " + "| MemtoReg: x"  + "| MemWrite: 1"  + "| Branch: 0"
+                          + "| ALUSrc: 1" + "| RegDst: x" + "| RegWrite: 0")
+                    print("Cycle: 4 " + "| MemtoReg: x"  + "| MemWrite: 1"  + "| Branch: 0"
+                          + "| ALUSrc: 1" + "| RegDst: x" + "| RegWrite: 0")
+                    print("Cycle: 5 " + "| MemtoReg: x"  + "| MemWrite: 1"  + "| Branch: 0"
+                          + "| ALUSrc: 1" + "| RegDst: x" + "| RegWrite: 0")
+
 
             elif self.name == "lw":
-                print("Cycle: " + str(self.cycle - 4) + "| PC:" + str(self.pc) + " lw $" + str(
+                print("Cycle: " + str(self.cycle - 5) + "| PC:" + str(self.pc) + " lw $" + str(
                     self.p1) + ", " + str(self.p2) + "($" + str(
                     self.p3) + ")   Taking 5 cycles")
 
-                print("Cycle: 1 " + "| MemtoReg: x"  + "| MemWrite: x"  + "| Branch: x"
-                      + "| ALUSrc: x" + "| RegDst: x" + "| RegWrite: x")
-                print("Cycle: 2 " + "| MemtoReg: 1"  + "| MemWrite: 0"  + "| Branch: 0"
-                      + "| ALUSrc: 1" + "| RegDst: 0" + "| RegWrite: 1")
-                print("Cycle: 3 " + "| MemtoReg: x"  + "| MemWrite: 0"  + "| Branch: 0"
-                      + "| ALUSrc: 1" + "| RegDst: 0" + "| RegWrite: 1")
-                print("Cycle: 4 " + "| MemtoReg: 1"  + "| MemWrite: 0"  + "| Branch: 0"
-                      + "| ALUSrc: 1" + "| RegDst: 0" + "| RegWrite: 1")
-                print("Cycle: 5 " + "| MemtoReg: x"  + "| MemWrite: 0"  + "| Branch: 0"
-                      + "| ALUSrc: 1" + "| RegDst: 0" + "| RegWrite: 1")
+                if (self.programMode == "MC"):
+                    print("Cycle: 1 " + "| MemtoReg: x"  + "| MemWrite: x"  + "| Branch: x"
+                          + "| ALUSrc: x" + "| RegDst: x" + "| RegWrite: x")
+                    print("Cycle: 2 " + "| MemtoReg: 1"  + "| MemWrite: 0"  + "| Branch: 0"
+                          + "| ALUSrc: 1" + "| RegDst: 0" + "| RegWrite: 1")
+                    print("Cycle: 3 " + "| MemtoReg: x"  + "| MemWrite: 0"  + "| Branch: 0"
+                          + "| ALUSrc: 1" + "| RegDst: 0" + "| RegWrite: 1")
+                    print("Cycle: 4 " + "| MemtoReg: 1"  + "| MemWrite: 0"  + "| Branch: 0"
+                          + "| ALUSrc: 1" + "| RegDst: 0" + "| RegWrite: 1")
+                    print("Cycle: 5 " + "| MemtoReg: x"  + "| MemWrite: 0"  + "| Branch: 0"
+                          + "| ALUSrc: 1" + "| RegDst: 0" + "| RegWrite: 1")
 
             else:
                 print("")
 
     def exitSim(self):
-        print("***Finished simulation***")
         print("Total # of cycles: " + str(self.cycle))
-        print("Dynamic instructions count: " + str(self.DIC) + ". Break down:")
-        print("                    " + str(self.threeCycles) + " instructions take 3 cycles")
-        print("                    " + str(self.fourCycles) + " instructions take 4 cycles")
-        print("                    " + str(self.fiveCycles) + " instructions take 5 cycles")
+        print("Dynamic instructions count: " + str(self.DIC))
+
+        if (self.programMode == "MC"):
+            print("Three Cycles: " + str(self.threeCycles) + " instructions take 3 cycles")
+            print("Four Cycles: " + str(self.fourCycles) + " instructions take 4 cycles")
+            print("Five Cycles: " + str(self.fiveCycles) + " instructions take 5 cycles")
+
+        if (self.programMode == "AP"):
+            print("Statistics of delays: " + str(self.delay))
+            print("Statistics of forward-path usage: " + str(self.delay))
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # -------------------------------------------------------------------------------------------------------------------- #
-# ------------------------------------------  Cache Simulator Start   ------------------------------------------------ #
+# -----------------------------------------------   Simulator Start   ------------------------------------------------ #
 # -------------------------------------------------------------------------------------------------------------------- #
 # -------------------------------------------------------------------------------------------------------------------- #
 
@@ -344,8 +377,9 @@ def simulate():
     global blk_size
     global Placement_Policy
     global menu
+    global programMode
 
-    stats = Statistic(debugMode)  # init. the statistic class, keeps track of debugmode as well
+    stats = Statistic(debugMode, programMode)  # init. the statistic class, keeps track of debugmode as well
 
     Instruction = instructionsList.copy()
 
@@ -456,7 +490,7 @@ def simulate():
             results = Register[int(fetch[1][1])] + imm
             results = checkResults(results)
             Register[int(fetch[1][0])] = results
-            stats.log(asmCopy[PC], fetch[0][0], fetch[1][0], fetch[1][1], fetch[1][2], 4, PC*4)  # addu instr, 4 cycles
+            stats.log(asmCopy[PC], fetch[0][0], fetch[1][0], fetch[1][1], fetch[1][2], 5, PC*4)  # addu instr, 5 cycles
 
         # ********************************************************************************************************* BEQ
         elif (fetch[0][0] == 'beq'):  # BEQ
@@ -506,7 +540,7 @@ def simulate():
             else: y = fetch[1][1][0]
 
             address = y + Register[x] # The actual address store-word is accessing
-            stats.log(asmCopy[PC], fetch[0][0], fetch[1][0], fetch[1][1][0], fetch[1][1][1], 4, PC*4)  # sw instr, 4 cycles
+            stats.log(asmCopy[PC], fetch[0][0], fetch[1][0], fetch[1][1][0], fetch[1][1][1], 5, PC*4)  # sw instr, 5 cycles
             Memory[address  - 8192] = Register[int(fetch[1][0])]
 
             PC += 1
@@ -648,7 +682,290 @@ def simulate():
 
             #Load word first from memory. It's software don't care about cache :)
             Register[int(fetch[1][0])] = Memory[address  - 8192]
-            stats.log(asmCopy[PC], fetch[0][0], fetch[1][0], fetch[1][1][0], fetch[1][1][1], 4, PC*4)  # sw instr, 4 cycles
+            stats.log(asmCopy[PC], fetch[0][0], fetch[1][0], fetch[1][1][0], fetch[1][1][1], 5, PC*4)  # sw instr, 5 cycles
+
+            PC += 1
+
+            if menu == 3:
+                addressBin = bin(address).replace('0b','').zfill(16)
+
+                if(Placement_Policy == "DM"):
+                    index = addressBin[16-word_offset-set_offset:16-word_offset] 
+
+                    if(debugMode):
+                        print("Address of loadword: ", address)
+                        print("Set index",index)
+
+                    index = int(index,2)
+                    tag = addressBin[0:16-word_offset-set_offset]#tag 
+
+                    if ( blocks[index][0] == 0 ): # Cache miss
+                        Misses += 1
+                        blocks[index][0] = 1    # Since we have cache miss, valid bit is now 1 after cache has updated value
+                        blocks[index][1] = tag
+                        blocks[index][2] = Memory[address - 8192]  # Load memory into cache data
+
+                        if(debugMode):
+                            print("Cache missed due to valid bit = 0")
+                            print("Tag = " ,blocks[index][1])
+
+                    else: # Valid bit is 1, now check if tag matches
+                        if( blocks[index][1] == tag): # Cache hit             
+                            Hits += 1
+                            if(debugMode):
+                                print("Cache hit")
+                                print("Tag = ",blocks[index][1])
+
+                        else: # Tag doesnt match, cache miss
+                            Misses += 1
+                            blocks[index][1] = tag
+                            blocks[index][2] = Memory[address - 8192]  # Load memory into cache data
+                            if(debugMode):
+                                print("Cache missed due to tag mismatch")
+                                print("Tag = ",Tag[index])
+
+                if(Placement_Policy == "FA"):
+                    found = False
+                    tag = addressBin[0:16-word_offset]   #tag
+
+                    for i in range(total_blk):
+                        if (blocks[i][0] == 1 and blocks[i][1] == tag): # Cache miss
+                            Hits += 1
+                            found = True
+                            if(debugMode):
+                                print("Cache hit")
+                                print("Tag = ",blocks[i][1])
+                            break
+                
+                    for i in range(total_blk):
+                        if (blocks[i][0] == 0):
+                            Misses += 1
+                            LRUQueue.pop(i)
+                            LRUQueue.append(i)
+                            blocks[i][0] = 1
+                            blocks[i][1] = tag
+                            blocks[i][2] = Memory[address - 8192]  # Load memory into cache data
+                            found = True
+                            if(debugMode):
+                                print("Cache missed")
+                                print("Tag = ",blocks[i][1])
+                            break
+
+                    if(found == False):
+                        Misses += 1
+                        i = LRUQueue.pop(0)
+                        LRUQueue.append(i)
+                        blocks[i][1] = tag
+                        blocks[i][2] = Memory[address - 8192]  # Load memory into cache data
+                        if(debugMode):
+                                print("Cache missed")
+                                print("Tag = ",blocks[i][1])
+
+                if(Placement_Policy == "SA"):
+                    index = addressBin[16-word_offset-set_offset:16-word_offset]
+                    index = int(index,2)
+                    tag = addressBin[0:16-word_offset-set_offset]#tag 
+
+                    total_blkInWays = int(total_blk/N)
+
+                    for i in range(total_blkInWays):
+                        if (ways[index][i][0] == 1 and ways[index][i][1] == tag): # Cache miss
+                            Hits += 1
+                            found = True
+                            if(debugMode):
+                                print("Cache hit")
+                                print("Tag = ",ways[index][i][1])
+                            break
+                
+                    for i in range(total_blkInWays):
+                        if (ways[index][i][0] == 0):
+                            Misses += 1
+                            waysQueue[index].pop(i)
+                            waysQueue[index].append(i)
+                            ways[index][i][0] = 1
+                            ways[index][i][1] = tag
+                            ways[index][i][2] = Memory[address - 8192]  # Load memory into cache data
+                            found = True
+                            if(debugMode):
+                                print("Cache missed")
+                                print("Tag = ",ways[index][i][1])
+                            break
+
+                    if(found == False):
+                        Misses += 1
+                        i = waysQueue[index].pop(0)
+                        waysQueue[index].append(i)
+                        ways[index][i][1] = tag
+                        ways[index][i][2] = Memory[address - 8192]  # Load memory into cache data
+                        if(debugMode):
+                                print("Cache missed")
+                                print("Tag = ",ways[index][i][1])
+
+                    if (debugMode):
+                        printInfo(Register, DIC, PC, Memory, Misses, Hits, ways,stats)
+
+
+        if (debugMode):
+            if(Placement_Policy == "SA"):
+                printInfo(Register, DIC, PC, Memory, Misses, Hits, ways,stats)
+            else:
+                printInfo(Register, DIC, PC, Memory, Misses, Hits, blocks,stats)
+
+        # ********************************************************************************************************* SB
+        elif (fetch[0][0] == 'sb'):  # SB
+
+            if isinstance(fetch[1][1][1],str): 
+                x= int(fetch[1][1][1]) 
+            else: x = fetch[1][1][1]
+
+            if isinstance(fetch[1][1][0],str): 
+                y= int(fetch[1][1][0]) 
+            else: y = fetch[1][1][0]
+
+            address = y + Register[x] # The actual address store-word is accessing
+            stats.log(asmCopy[PC], fetch[0][0], fetch[1][0], fetch[1][1][0], fetch[1][1][1], 5, PC*4)  # sw instr, 5 cycles
+            Memory[address  - 8192] = Register[int(fetch[1][0])]
+
+            PC += 1
+
+            if menu == 3:
+                #Store word first in memory. It's software don't care about cache :)
+                addressBin = bin(address).replace('0b','').zfill(16)
+
+
+                if(Placement_Policy == "DM"):
+                    index = addressBin[16-word_offset-set_offset:16-word_offset] 
+
+                    if(debugMode):
+                        print("Address of StoreWord: ", address)
+                        print("Set index",index)
+
+                    index = int(index,2)
+                    tag = addressBin[0:16-word_offset-set_offset]#tag 
+
+                    if ( blocks[index][0] == 0 ): # Cache miss
+                        Misses += 1
+                        blocks[index][0] = 1    # Since we have cache miss, valid bit is now 1 after cache has updated value
+                        blocks[index][1] = tag
+                        blocks[index][2] = Memory[address - 8192]  # Load memory into cache data
+
+                        if(debugMode):
+                            print("Cache missed due to valid bit = 0")
+                            print("Tag = " ,blocks[index][1])
+
+                    else: # Valid bit is 1, now check if tag matches
+                        if( blocks[index][1] == tag): # Cache hit             
+                            Hits += 1
+                            if(debugMode):
+                                print("Cache hit")
+                                print("Tag = ",blocks[index][1])
+
+                        else: # Tag doesnt match, cache miss
+                            Misses += 1
+                            blocks[index][1] = tag
+                            blocks[index][2] = Memory[address - 8192]  # store memory into cache data
+                            if(debugMode):
+                                print("Cache missed due to tag mismatch")
+                                print("Tag = ",blocks[index][1])
+
+                if(Placement_Policy == "FA"):
+                    found = False
+                    tag = addressBin[0:16-word_offset]   #tag
+
+                    for i in range(total_blk):
+                        if (blocks[i][0] == 1 and blocks[i][1] == tag): # Cache miss
+                            Hits += 1
+                            found = True
+                            if(debugMode):
+                                print("Cache hit")
+                                print("Tag = ",blocks[i][1])
+                            break
+
+                    if(found == False):
+                        for i in range(total_blk):
+                            if (blocks[i][0] == 0):
+                                Misses += 1
+                                blocks[i][0] = 1
+                                blocks[i][1] = tag
+                                blocks[i][2] = Memory[address - 8192]  # Load memory into cache data
+                                LRUQueue.pop(i)
+                                LRUQueue.append(i)
+                                found = True
+                                if(debugMode):
+                                    print("Cache missed")
+                                    print("Tag = ",blocks[i][1])
+                                break
+
+                    if(found == False):
+                        Misses += 1
+                        i = LRUQueue.pop(0)
+                        LRUQueue.append(i)
+                        blocks[i][1] = tag
+                        blocks[i][2] = Memory[address - 8192]  # Load memory into cache data
+                        if(debugMode):
+                                print("Cache missed")
+                                print("Tag = ",blocks[i][1])
+
+                if(Placement_Policy == "SA"):
+                    index = addressBin[16-word_offset-set_offset:16-word_offset]
+                    index = int(index,2)
+                    tag = addressBin[0:16-word_offset-set_offset]#tag 
+
+                    total_blkInWays = int(total_blk/N)
+
+                    for i in range(total_blkInWays):
+                        if (ways[index][i][0] == 1 and ways[index][i][1] == tag): # Cache miss
+                            Hits += 1
+                            found = True
+                            if(debugMode):
+                                print("Cache hit")
+                                print("Tag = ",ways[index][i][1])
+                            break
+                
+                    for i in range(total_blkInWays):
+                        if (ways[index][i][0] == 0):
+                            Misses += 1
+                            waysQueue[index].pop(i)
+                            waysQueue[index].append(i)
+                            ways[index][i][0] = 1
+                            ways[index][i][1] = tag
+                            ways[index][i][2] = Memory[address - 8192]  # Load memory into cache data
+                            found = True
+                            if(debugMode):
+                                print("Cache missed")
+                                print("Tag = ",ways[index][i][1])
+                            break
+
+                    if(found == False):
+                        Misses += 1
+                        i = waysQueue[index].pop(0)
+                        waysQueue[index].append(i)
+                        ways[index][i][1] = tag
+                        ways[index][i][2] = Memory[address - 8192]  # Load memory into cache data
+                        if(debugMode):
+                                print("Cache missed")
+                                print("Tag = ",ways[index][i][1])
+                
+                if (debugMode):
+                    printInfo(Register, DIC, PC, Memory, Misses, Hits, ways,stats)
+
+            
+        # *********************************************************************************************************LB
+        elif (fetch[0][0] == 'lb'):  # ********LOAD WORD********
+
+            if isinstance(fetch[1][1][1],str): 
+                x= int(fetch[1][1][1]) 
+            else: x = fetch[1][1][1]
+
+            if isinstance(fetch[1][1][0],str): 
+                y= int(fetch[1][1][0]) 
+            else: y = fetch[1][1][0]
+
+            address = y + Register[x] # The actual address load-word is accessing
+
+            #Load word first from memory. It's software don't care about cache :)
+            Register[int(fetch[1][0])] = Memory[address  - 8192]
+            stats.log(asmCopy[PC], fetch[0][0], fetch[1][0], fetch[1][1][0], fetch[1][1][1], 5, PC*4)  # sw instr, 5 cycles
 
             PC += 1
 
@@ -779,11 +1096,14 @@ def simulate():
 
     print("***Finished simulation***")
     printInfo(Register, DIC, PC, Memory, Misses, Hits, blocks, stats)
+    if(menu == 1 or menu == 2):
+        stats.exitSim()
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # ---- FUNCTION: Prints the registers information when the debug mode is on.
 def printInfo(_register, _DIC, _PC,_Mem,_Misses,_Hits,_Cache, _stats):
     global menu
+    global debugMode
 
     print('\n************** Instruction Number ' + str(_PC) + '. ' + asmCopy[_PC-1] + ' : **************\n')
     print('Registers $0 - $23: \n', _register)
@@ -793,11 +1113,11 @@ def printInfo(_register, _DIC, _PC,_Mem,_Misses,_Hits,_Cache, _stats):
     print('\nDynamic instructions count: ', _DIC)
     print('PC = ', _PC*4)
 
-    if menu == 1:
+    if menu == 1 and debugMode == True:
         print("\n***AP Info***")
         _stats.prints()
 
-    if menu == 2:
+    if menu == 2 and debugMode == True:
         print("\n***MC Info***")
         _stats.prints()
 
@@ -811,8 +1131,9 @@ def printInfo(_register, _DIC, _PC,_Mem,_Misses,_Hits,_Cache, _stats):
             print("Cache Hit Rate:" + str(100 * (float(_Hits) / float(_Hits + _Misses))))
         print("Blocks info (contains index, valid, tag, and data): " + str(_Cache))
 
-    print('\nPress enter to continue.......')
-    input()
+    if debugMode:
+        print('\nPress enter to continue.......')
+        input()
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # -------------------------------------------------------------------------------------------------------------------- #
@@ -943,6 +1264,7 @@ def main():
     global blk_size
     global Sets
     global total_blk
+    global programMode
 
     ## Keeps loop until user hits Exit.
     while True:
@@ -963,6 +1285,7 @@ def main():
         ## AP
         if menu == 1:
             ## Debug mode or normal mode
+            programMode = "MC"
             print("\nWould you like to run simulator in debug mode ?")
             debugMode =True if  int(input("\n1: debug mode \n\n2: normal execution\n")) == 1 else False
             instructionsList = insertMipsFile()
@@ -972,6 +1295,7 @@ def main():
         ## MC
         if menu == 2:
             ## Debug mode or normal mode
+            programMode = "AP"
             print("\nWould you like to run simulator in debug mode ?")
             debugMode =True if  int(input("\n1: debug mode \n\n2: normal execution\n")) == 1 else False
             instructionsList = insertMipsFile()
