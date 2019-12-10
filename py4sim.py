@@ -1217,11 +1217,11 @@ def printInfo(_register, _DIC, _PC,_Mem,_Misses,_Hits,_Cache, _stats):
     print('PC = ', _PC*4)
 
     if menu == 1 and debugMode == True:
-        print("\n***AP Info***")
+        print("\n***MC Info***")
         _stats.prints()
 
     if menu == 2 and debugMode == True:
-        print("\n***MC Info***")
+        print("\n***AP Info***")
         _stats.prints()
 
     if menu == 3:
