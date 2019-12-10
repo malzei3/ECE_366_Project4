@@ -74,67 +74,193 @@ class Statistic:
                     self.p1) + ", $" + str(self.p2) + ", "+ str(
                     self.p3) + "   Taking 5 cycles\n\n")
 
-                print("Cycle: 1 " + "| MemtoReg: x"  + "| MemWrite: "  + "| Branch: "
-                      + "| ALUSrc: " + "| RegDst:" + "| RegWrite: ")
-                print("Cycle: 1 " + "| MemtoReg: x"  + "| MemWrite: "  + "| Branch: "
-                      + "| ALUSrc: " + "| RegDst:" + "| RegWrite: ")
-                print("Cycle: 1 " + "| MemtoReg: x"  + "| MemWrite: "  + "| Branch: "
-                      + "| ALUSrc: " + "| RegDst:" + "| RegWrite: ")
-                print("Cycle: 1 " + "| MemtoReg: x"  + "| MemWrite: "  + "| Branch: "
-                      + "| ALUSrc: " + "| RegDst:" + "| RegWrite: ")
+                print("Cycle: 1 " + "| MemtoReg: x"  + "| MemWrite: x"  + "| Branch: x"
+                      + "| ALUSrc: x" + "| RegDst: x" + "| RegWrite: x")
+                print("Cycle: 2 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
+                      + "| ALUSrc: 1" + "| RegDst: 0" + "| RegWrite: 1")
+                print("Cycle: 3 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
+                      + "| ALUSrc: 1" + "| RegDst: 0" + "| RegWrite: 1")
+                print("Cycle: 4 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
+                      + "| ALUSrc: 1" + "| RegDst: 0" + "| RegWrite: 1")
+                print("Cycle: 5 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
+                      + "| ALUSrc: 1" + "| RegDst: 0" + "| RegWrite: 1")
 
             elif self.name == "addi":
                 print("Cycle: " + str(self.cycle - 4) + "| PC:" + str(self.pc) + " addi $" + str(
                     self.p1) + ", $" + str(self.p2) + ", " + str(
-                    self.p3) + "   Taking 4 cycles")
+                    self.p3) + "   Taking 5 cycles")
+
+                
+                print("Cycle: 1 " + "| MemtoReg: x"  + "| MemWrite: x"  + "| Branch: x"
+                      + "| ALUSrc: x" + "| RegDst: x" + "| RegWrite: x")
+                print("Cycle: 2 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
+                      + "| ALUSrc: 1" + "| RegDst: 0" + "| RegWrite: 1")
+                print("Cycle: 3 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
+                      + "| ALUSrc: 1" + "| RegDst: 0" + "| RegWrite: 1")
+                print("Cycle: 4 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
+                      + "| ALUSrc: 1" + "| RegDst: 0" + "| RegWrite: 1")
+                print("Cycle: 5 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
+                      + "| ALUSrc: 1" + "| RegDst: 0" + "| RegWrite: 1")
                 
             elif self.name == "addu":
                 print("Cycle: " + str(self.cycle - 4) + "| PC:" + str(self.pc) + " addu $" + str(
                     self.p1) + ", $" + str(self.p2) + ", $" + str(
                     self.p3) + "   Taking 4 cycles")
+
+                 print("Cycle: 1 " + "| MemtoReg: x"  + "| MemWrite: x"  + "| Branch: x"
+                      + "| ALUSrc: x" + "| RegDst: x" + "| RegWrite: x")
+                print("Cycle: 2 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
+                      + "| ALUSrc: 0" + "| RegDst: 1" + "| RegWrite: 1")
+                print("Cycle: 3 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
+                      + "| ALUSrc: 0" + "| RegDst: 1" + "| RegWrite: 1")
+                print("Cycle: 4 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
+                      + "| ALUSrc: 0" + "| RegDst: 1" + "| RegWrite: 1")
+
             elif self.name == "beq":
                 print("Cycle: " + str(self.cycle - 3) + "| PC:" + str(self.pc) + " beq $" + str(
                     self.p1) + ", " + str(self.p2) + ", " + str(
-                    self.p3) + "   Taking 4 cycles")
+                    self.p3) + "   Taking 3 cycles")
+
+                 print("Cycle: 1 " + "| MemtoReg: x"  + "| MemWrite: x"  + "| Branch: x"
+                      + "| ALUSrc: x" + "| RegDst: x" + "| RegWrite: x")
+                print("Cycle: 2 " + "| MemtoReg: x"  + "| MemWrite: 0"  + "| Branch: 1"
+                      + "| ALUSrc: 0" + "| RegDst: x" + "| RegWrite: 0")
+                print("Cycle: 3 " + "| MemtoReg: x"  + "| MemWrite: 0"  + "| Branch: 1"
+                      + "| ALUSrc: 0" + "| RegDst: x" + "| RegWrite: 0")
+
             elif self.name == "bne":
                 print("Cycle: " + str(self.cycle - 3) + "| PC:" + str(self.pc) + " bne $" + str(
                     self.p1) + ", " + str(self.p2) + ", " + str(
-                    self.p3) + "   Taking 4 cycles")
+                    self.p3) + "   Taking 3 cycles")
+
+                 print("Cycle: 1 " + "| MemtoReg: x"  + "| MemWrite: x"  + "| Branch: x"
+                      + "| ALUSrc: x" + "| RegDst: x" + "| RegWrite: x")
+                print("Cycle: 2 " + "| MemtoReg: x"  + "| MemWrite: 0"  + "| Branch: 1"
+                      + "| ALUSrc: 0" + "| RegDst: x" + "| RegWrite: 0")
+                print("Cycle: 3 " + "| MemtoReg: x"  + "| MemWrite: 0"  + "| Branch: 1"
+                      + "| ALUSrc: 0" + "| RegDst: x" + "| RegWrite: 0")
+
             elif self.name == "sll":
                 print("Cycle: " + str(self.cycle - 4) + "| PC:" + str(self.pc) + " sll $" + str(
                     self.p1) + ", $" + str(self.p2) + ", " + str(
                     self.p3) + "   Taking 4 cycles")
+
+                 print("Cycle: 1 " + "| MemtoReg: x"  + "| MemWrite: x"  + "| Branch: x"
+                      + "| ALUSrc: x" + "| RegDst: x" + "| RegWrite: x")
+                print("Cycle: 2 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
+                      + "| ALUSrc: 0" + "| RegDst: 1" + "| RegWrite: 1")
+                print("Cycle: 3 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
+                      + "| ALUSrc: 0" + "| RegDst: 1" + "| RegWrite: 1")
+                print("Cycle: 4 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
+                      + "| ALUSrc: 0" + "| RegDst: 1" + "| RegWrite: 1")
+
             elif self.name == "sub":
                 print("Cycle: " + str(self.cycle - 4) + "| PC:" + str(self.pc) + " sub $" + str(
                     self.p1) + ", $" + str(self.p2) + ", $" + str(
                     self.p3) + "   Taking 4 cycles")
+
+                print("Cycle: 1 " + "| MemtoReg: x"  + "| MemWrite: x"  + "| Branch: x"
+                      + "| ALUSrc: x" + "| RegDst: x" + "| RegWrite: x")
+                print("Cycle: 2 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
+                      + "| ALUSrc: 0" + "| RegDst: 1" + "| RegWrite: 1")
+                print("Cycle: 3 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
+                      + "| ALUSrc: 0" + "| RegDst: 1" + "| RegWrite: 1")
+                print("Cycle: 4 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
+                      + "| ALUSrc: 0" + "| RegDst: 1" + "| RegWrite: 1")
+
             elif self.name == "xor":
                 print("Cycle: " + str(self.cycle - 4) + "| PC:" + str(self.pc) + " xor $" + str(
                     self.p1) + ", $" + str(self.p2) + ", $" + str(
                     self.p3) + "   Taking 4 cycles")
+
+                print("Cycle: 1 " + "| MemtoReg: x"  + "| MemWrite: x"  + "| Branch: x"
+                      + "| ALUSrc: x" + "| RegDst: x" + "| RegWrite: x")
+                print("Cycle: 2 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
+                      + "| ALUSrc: 0" + "| RegDst: 1" + "| RegWrite: 1")
+                print("Cycle: 3 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
+                      + "| ALUSrc: 0" + "| RegDst: 1" + "| RegWrite: 1")
+                print("Cycle: 4 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
+                      + "| ALUSrc: 0" + "| RegDst: 1" + "| RegWrite: 1")
+
             elif self.name == "slt":
                 print("Cycle: " + str(self.cycle - 4) + "| PC:" + str(self.pc) + " slt $" + str(
                     self.p1) + ", $" + str(self.p2) + ", $" + str(
                     self.p3) + "   Taking 4 cycles")
+
+                 print("Cycle: 1 " + "| MemtoReg: x"  + "| MemWrite: x"  + "| Branch: x"
+                      + "| ALUSrc: x" + "| RegDst: x" + "| RegWrite: x")
+                print("Cycle: 2 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
+                      + "| ALUSrc: 0" + "| RegDst: 1" + "| RegWrite: 1")
+                print("Cycle: 3 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
+                      + "| ALUSrc: 0" + "| RegDst: 1" + "| RegWrite: 1")
+                print("Cycle: 4 " + "| MemtoReg: 0"  + "| MemWrite: 0"  + "| Branch: 0"
+                      + "| ALUSrc: 0" + "| RegDst: 1" + "| RegWrite: 1")
+
             #sb $t, offset($s)
             elif self.name == "sb":
                 print("Cycle: " + str(self.cycle - 4) + "| PC:" + str(self.pc) + " sb $" + str(
                     self.p1) + ", " + str(self.p2) + "($" + str(
-                    self.p3) + ")   Taking 4 cycles")
+                    self.p3) + ")   Taking 5 cycles")
+                
+                 print("Cycle: 1 x" + "| MemtoReg: x"  + "| MemWrite: x"  + "| Branch: x"
+                      + "| ALUSrc: x" + "| RegDst: x" + "| RegWrite: x")
+                print("Cycle: 2 " + "| MemtoReg: x"  + "| MemWrite: 1"  + "| Branch: 0"
+                      + "| ALUSrc: 1" + "| RegDst: x" + "| RegWrite: 0")
+                print("Cycle: 3 " + "| MemtoReg: x"  + "| MemWrite: 1"  + "| Branch: 0"
+                      + "| ALUSrc: 1" + "| RegDst: x" + "| RegWrite: 0")
+                print("Cycle: 4 " + "| MemtoReg: x"  + "| MemWrite: 1"  + "| Branch: 0"
+                      + "| ALUSrc: 1" + "| RegDst: x" + "| RegWrite: 0")
+                print("Cycle: 5 " + "| MemtoReg: x"  + "| MemWrite: 1"  + "| Branch: 0"
+                      + "| ALUSrc: 1" + "| RegDst: x" + "| RegWrite: 0")
+
             #lw $t, offset($s)
             elif self.name == "lb":
                 print("Cycle: " + str(self.cycle - 4) + "| PC:" + str(self.pc) + " lb $" + str(
                     self.p1) + ", " + str(self.p2) + "($" + str(
-                    self.p3) + ")   Taking 4 cycles")
+                    self.p3) + ")   Taking 5 cycles")
+
+                 print("Cycle: 1 " + "| MemtoReg: x"  + "| MemWrite: x"  + "| Branch: x"
+                      + "| ALUSrc: x" + "| RegDst: x" + "| RegWrite: x")
+                print("Cycle: 2 " + "| MemtoReg: 1"  + "| MemWrite: 0"  + "| Branch: 0"
+                      + "| ALUSrc: 1" + "| RegDst: 0" + "| RegWrite: 1")
+                print("Cycle: 3 " + "| MemtoReg: x"  + "| MemWrite: 0"  + "| Branch: 0"
+                      + "| ALUSrc: 1" + "| RegDst: 0" + "| RegWrite: 1")
+                print("Cycle: 4 " + "| MemtoReg: 1"  + "| MemWrite: 0"  + "| Branch: 0"
+                      + "| ALUSrc: 1" + "| RegDst: 0" + "| RegWrite: 1")
+                print("Cycle: 5 " + "| MemtoReg: x"  + "| MemWrite: 0"  + "| Branch: 0"
+                      + "| ALUSrc: 1" + "| RegDst: 0" + "| RegWrite: 1")
 
             elif self.name == "sw":
                 print("Cycle: " + str(self.cycle - 4) + "| PC:" + str(self.pc) + " sw $" + str(
                     self.p1) + ", " + str(self.p2) + "($" + str(
-                    self.p3) + ")   Taking 4 cycles")
+                    self.p3) + ")   Taking 5 cycles")
+
+                 print("Cycle: 1 x" + "| MemtoReg: x"  + "| MemWrite: x"  + "| Branch: x"
+                      + "| ALUSrc: x" + "| RegDst: x" + "| RegWrite: x")
+                print("Cycle: 2 " + "| MemtoReg: x"  + "| MemWrite: 1"  + "| Branch: 0"
+                      + "| ALUSrc: 1" + "| RegDst: x" + "| RegWrite: 0")
+                print("Cycle: 3 " + "| MemtoReg: x"  + "| MemWrite: 1"  + "| Branch: 0"
+                      + "| ALUSrc: 1" + "| RegDst: x" + "| RegWrite: 0")
+                print("Cycle: 4 " + "| MemtoReg: x"  + "| MemWrite: 1"  + "| Branch: 0"
+                      + "| ALUSrc: 1" + "| RegDst: x" + "| RegWrite: 0")
+                print("Cycle: 5 " + "| MemtoReg: x"  + "| MemWrite: 1"  + "| Branch: 0"
+                      + "| ALUSrc: 1" + "| RegDst: x" + "| RegWrite: 0")
+
             elif self.name == "lw":
                 print("Cycle: " + str(self.cycle - 4) + "| PC:" + str(self.pc) + " lw $" + str(
                     self.p1) + ", " + str(self.p2) + "($" + str(
-                    self.p3) + ")   Taking 4 cycles")
+                    self.p3) + ")   Taking 5 cycles")
+
+                print("Cycle: 1 " + "| MemtoReg: x"  + "| MemWrite: x"  + "| Branch: x"
+                      + "| ALUSrc: x" + "| RegDst: x" + "| RegWrite: x")
+                print("Cycle: 2 " + "| MemtoReg: 1"  + "| MemWrite: 0"  + "| Branch: 0"
+                      + "| ALUSrc: 1" + "| RegDst: 0" + "| RegWrite: 1")
+                print("Cycle: 3 " + "| MemtoReg: x"  + "| MemWrite: 0"  + "| Branch: 0"
+                      + "| ALUSrc: 1" + "| RegDst: 0" + "| RegWrite: 1")
+                print("Cycle: 4 " + "| MemtoReg: 1"  + "| MemWrite: 0"  + "| Branch: 0"
+                      + "| ALUSrc: 1" + "| RegDst: 0" + "| RegWrite: 1")
+                print("Cycle: 5 " + "| MemtoReg: x"  + "| MemWrite: 0"  + "| Branch: 0"
+                      + "| ALUSrc: 1" + "| RegDst: 0" + "| RegWrite: 1")
 
             else:
                 print("")
